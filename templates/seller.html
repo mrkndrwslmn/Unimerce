@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNIMERCE</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/product.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="https://atugatran.github.io/FontAwesome6Pro/css/all.min.css" >
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet">
+    <link rel='stylesheet' href='https://unpkg.com/boxicons@latest/css/boxicons.min.css' />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+
+<body>
+    
+    <header>
+
+        <div class="header-top">
+    
+          <div class="container">
+    
+            <ul class="header-social-container">
+    
+              <li>
+                <a href="facebook.com" class="social-link">
+                  <i class="fab fa-facebook"></i>
+                </a>
+              </li>
+    
+              <li>
+                <a href="x.com" class="social-link">
+                  <i class="fab fa-x-twitter"></i>
+                </a>
+              </li>
+    
+              <li>
+                <a href="instagram.com" class="social-link">
+                  <i class="fab fa-instagram"></i>
+                </a>
+              </li>
+    
+            </ul>
+    
+            <div class="header-alert-news">
+              <p>
+                <b>Free Shipping</b>
+                This Week for Orders Over - $55
+              </p>
+            </div>
+    
+            <div class="header-top-actions">
+    
+              <select name="currency">
+    
+                <option value="usd">USD &dollar;</option>
+                <option value="eur">EUR &euro;</option>
+    
+              </select>
+    
+              <select name="language">
+    
+                <option value="en-US">English</option>
+                <option value="es-ES">Espa&ntilde;ol</option>
+                <option value="fr">Fran&ccedil;ais</option>
+    
+              </select>
+    
+            </div>
+    
+          </div>
+    
+        </div>
+    
+        <div class="header-main">
+    
+          <div class="container">
+    
+            <a href="{{url_for('homepage')}}" class="header-logo">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Banner 1">
+            </a>
+            
+            <div class="header-flex">
+              <div class="header-controls">
+                  <select id="categoryDropdown">
+                      <option value="">All</option>
+                      {% for category in categories %}
+                          <option value="{{ category }}">{{ category.name }}</option>
+                      {% endfor %}
+                  </select>
+              </div>
+              
+              <div class="header-search-container">
+                  <input type="search" name="search" class="search-field" placeholder="Search your favorite products">
+                  <button type="button" class="search-btn">Search</button>
+              </div>
+          </div>
+          
+    
+            <div class="header-user-actions">
+              <button class="action-btn" onclick="window.location.href='{{ url_for('profile') }}'">
+                <i class="fa-solid fa-user"></i>
+              </button>
+    
+              <button class="action-btn">
+                <i class="fa-solid fa-heart"></i>
+                <span class="count">0</span>
+              </button>
+    
+              <button class="action-btn">
+                <i class="fa-sharp fa-solid fa-bag-shopping"></i>
+                <span class="count">0</span>
+              </button>
+    
+            </div>
+    
+          </div>
+    
+        </div>          
+    
+        </nav>
+    
+      </header>
+
+<div class="seller-info-container">
+        <div class="seller-basics">
+            <div class="seller-basics-img">
+                <img src="{{ seller.imgURL }}" alt="{{ seller.shopName }}" class="seller-image img-fluid">
+            </div>
+
+            <div class="seller-details">
+                <div class="seller-basics-name">                    
+                    <h2>
+                        {{seller.shopName}}        
+                        {% if seller.isVerified %}
+                        <span class="badge" title="Verified Seller"><i class="fa-solid fa-badge-check"></i></span> 
+                        {% endif %}                
+                    </h2>
+                    <a href="{{ url_for('seller', seller_id=seller.sellerID) }}"></a>
+                    <button class="store-btn"><i class="fa-regular fa-store"></i>View Store</i></button>
+                </div>
+                <div class="seller-separator"></div>
+            <div class="seller-rating">                
+                <h3>Ratings: <i class='bx bxs-star'></i> {{ seller.totalRating }}</h3>
+            </div>
+            <div class="seller-separator"></div>
+            <div class="seller-products">
+                <h3>Products: {{ seller.productsNum }}</h3>
+            </div>
+            <div class="seller-separator"></div>
+            <div class="seller-followers">
+                <h3>Followers: {{ seller.totalFollowers }}</h3>
+            </div>            
+            <div class="seller-separator"></div>
+            <div class="seller-joined">
+                <h3>Joined: {{ seller.joinedDate }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+    
+
+    <div class="slideshow-container">
+        <!-- Slideshow images -->  
+        <div class="slide fade">
+          <img src="{{ url_for('static', filename='images/banner.png') }}" alt="Banner 1">
+      </div>
+
+        <div class="slide fade">
+            <img src="{{ url_for('static', filename='images/banner1.png') }}" alt="Banner 2">
+        </div>
+      
+        <div class="slide fade">
+            <img src="{{ url_for('static', filename='images/banner2.png') }}" alt="Banner 3">
+        </div>
+      
+        <div class="slide fade">
+            <img src="{{ url_for('static', filename='images/banner3.png') }}" alt="Banner 4">
+        </div>
+      
+        <div class="slide fade">
+            <img src="{{ url_for('static', filename='images/banner4.png') }}" alt="Banner 5">
+        </div>
+      
+        <div class="slide fade">
+            <img src="{{ url_for('static', filename='images/banner5.png') }}" alt="Banner 6">
+        </div>
+        
+        <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+        <a class="next" onclick="plusSlides(1)">&#10095;</a>        
+
+        <!-- Circle indicators -->
+        <div class="dots-container">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+      </div>
+
+        <section id="collection">
+            <div class="collections-wrapper">
+                <h2>Shop by Categories</h2>
+                <div class="collections-container" id="collections-container">
+                    {% for category in categories %}
+                    <div class="content">
+                        <img src="{{ category.imgURL }}" alt="{{ category.name }}">
+                        <div class="img-content">
+                            <p>{{ category.name }}</p>
+                            <button><a href="category_link_here">SHOP NOW</a></button>
+                        </div>
+                    </div>
+                    {% endfor %}                        
+                </div>
+                <div class="buttons">
+                    <button class="scroll-btn" id="scroll-left">←</button>           
+                    <button class="scroll-btn" id="scroll-right">→</button>
+                </div>
+            </div>
+        </section>     
+  
+        <section id="products">   
+          <div class="products-container"> 
+              <h2>Top Sales</h2>
+              <div class="product-items"> 
+                  {% for product in top_sales %}
+                  <a href="{{ url_for('product', product_id=product.productID) }}">
+                      <div class="product-p1">                        
+                          <div class="image-container">
+                              <img src="{{ product.imgURL }}" alt="{{ product.productName }}">
+                              {% if product.discount_rate and (product.campaign_start <= current_date <= product.campaign_end) %}
+                                  <span class="discount-rate1">{{ product.discount_rate }}% Off</span>
+                              {% endif %}
+                          </div>
+        
+                          <div class="name-of-p product-name"> <!-- Product name -->
+                            <p>{{ product.productName }}</p>
+                          </div>  
+                          
+                          <div class="product-txt">                           
+        
+                              <div class="discount-info">
+                                  {% if product.discount_rate and (product.campaign_start <= current_date <= product.campaign_end) %}
+                                      <div class="discounted-price1">&dollar;{{ product.discounted_price | round(2) }}</div>
+                                      <div class="original-price1">&dollar;{{ product.original_price | round(2) }}</div>
+                                  {% else %}
+                                      <div class="price">&dollar;{{ product.original_price | round(2) }}</div>
+                                  {% endif %}
+                              </div>
+        
+                              <div class="rating">
+                                  {% for i in range(1, 6) %}
+                                      {% if i <= product.productRating %}
+                                          <i class='bx bxs-star'></i>
+                                      {% else %}
+                                          <i class='bx bx-star'></i>
+                                      {% endif %}
+                                  {% endfor %}
+                                  ({{ product.productSold }})
+                              </div>           
+                          </div>
+                        </a>
+                      </div>
+                  {% endfor %}
+              </div>
+              <div class="show-more">
+                  <p>View more...</p>
+              </div>            
+          </div>
+        </section>
+        
+
+<section id="deals-of-week">
+  <div class="deals-container">
+      <h2>Flash Deal</h2>
+      <div class="promotions-wrapper">
+        {% if deals %}
+        {% for promotion in deals %}
+        <div class="promotion-item" data-end-date="{{ promotion.end_date }}"> <!-- Add data attribute here -->
+          <div class="discount-rate">-{{ promotion.discount_rate }}% Off</div> <!-- Discount Rate -->  
+          <img src="{{ promotion.img_url }}" alt="{{ promotion.product_name }}" class="product-image">
+            <div class="promotion-info">
+                <h3 class="product-name">{{ promotion.product_name }}</h3>
+                <p class="product-description">{{ promotion.product_desc }}</p>
+                <div class="price-container">
+                    <span class="discounted-price">${{ promotion.discounted_price }}</span>
+                    <span class="original-price">${{ promotion.original_price }}</span>
+                </div>
+                <button class="add-to-cart">Add to Cart</button>
+                <div class="timer">
+                    <div class="time-item"><span class="days">00</span> Days</div>
+                    <div class="time-item"><span class="hours">00</span> Hours</div>
+                    <div class="time-item"><span class="minutes">00</span> Minutes</div>
+                    <div class="time-item"><span class="seconds">00</span> Seconds</div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No current promotions available.</p>
+    {% endif %}    
+      </div>
+  </div>
+</section>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="alert alert-success flash-message">
+      {{ messages[0] }}
+    </div>
+  {% endif %}
+{% endwith %}
+
+
+<footer>
+    <div class="unimerce-info">
+      <h3>Buy and Sell Online on UNIMERCE</h3>
+      <p>UNIMERCE is a fun, free, and trusted platform to buy and sell instantly online. As a leading mobile-first marketplace in the Philippines, we welcome you to join millions of users in listing products and discovering unbeatable deals. Shopping on UNIMERCE is safe, with our guarantee ensuring that you receive your ordered items or get your money back. Create and browse listings for free, with no hidden charges. Join our vibrant UNIMERCE community and start your shopping journey today!
+
+        UNIMERCE is dedicated to providing the best online shopping experience for every Filipino household. With numerous campaigns throughout the year, we strive to make shopping enjoyable and memorable. From free shipping offers to discount vouchers, UNIMERCE consistently impresses loyal customers and new shoppers alike. Download the UNIMERCE app now and visit our website to get started!</p>
+      
+      <h3>Experience an Unforgettable Shopping Spree on UNIMERCE</h3>
+      <p>At UNIMERCE, you can find everything you need at the best prices. Our platform is designed to make your online shopping as easy as possible. UNIMERCE is a social marketplace, offering instant and personalized updates from your friends and community members. If you come across great products or deals, you can effortlessly share them with friends with just a tap.
+
+        Shop with confidence, using shop ratings and reviews to discover trusted sellers. We prioritize your safety in our online marketplace! With the UNIMERCE Guarantee, you can get your money back if your order doesn’t arrive as expected. Keep track of your guarantee period to extend it if necessary or to request a return or refund. We’re here to ensure you have a delightful shopping experience!
+        
+        Not sure what to buy? Our new hashtags keep you updated on trending products. Explore our categories, including jewelry, electronics, and home essentials. Discover popular mobile phones like the latest models and find the perfect gifts for your loved ones. Whether it's fitness equipment, beauty products, or pet care essentials, UNIMERCE has something for everyone!
+        
+        Curious about the latest trends? UNIMERCE features all the hottest products, including the buzz-worthy Piso Wifi! Use our smart search or personalized recommendations to find exactly what you’re looking for, and enjoy perks like free shipping on selected items. Start shopping on UNIMERCE today!</p>
+
+      <h3>Enjoy Special Deals, Sales, Promos, and Discounts on UNIMERCE</h3>
+      <p>Shopping on UNIMERCE is not only easy and secure; it’s also a lot of fun! Take advantage of major sales events like our Super Shopping Days to snag the best discounts on your favorite products. Enjoy exclusive promotions, free shipping vouchers, and flash sales, and become a true UNIMERCE enthusiast. If you’re new to UNIMERCE, don’t miss out on our New User vouchers, specially designed to welcome you to your new favorite shopping destination!
+
+        Now is the perfect time to create your UNIMERCE account and dive into the exciting world of online shopping. Don’t miss out on the incredible sales and unbeatable prices waiting for you!</p>
+
+      <h3>Get Free Shipping on UNIMERCE</h3>
+      <p>In addition to New User vouchers, take advantage of our free shipping offers today! Shop to your heart’s content and enjoy reduced delivery fees with UNIMERCE’s free shipping options. Say goodbye to added shipping costs and enjoy seamless shopping experiences.</p>
+
+      <h3>Select Your Preferred Payment Method on UNIMERCE</h3>
+      <p>Choose from a variety of payment methods, including banks, e-wallets, and UNIMERCE Pay! At checkout, simply select the payment option that works best for you. Explore the benefits of using UNIMERCE Pay for exclusive vouchers, including free shipping on your orders. If it’s your first time shopping with us, be sure to use your New User vouchers to maximize your savings!</p>
+
+      <h3>Join the Fun with UNIMERCE Prizes</h3>
+      <p>For added entertainment, don’t miss out on UNIMERCE Prizes! Play engaging games on the UNIMERCE app for a chance to win amazing rewards. Discover tips and tricks for our most popular games and enjoy the thrill of gaming, exclusive to our app.</p>
+
+      
+      <h3>Sell Online Effortlessly on UNIMERCE</h3>
+      <p>UNIMERCE equips sellers with the right tools to succeed on our marketplace. List your products in less than 30 seconds and gain more visibility by participating in our campaigns and promotions. Manage your shop effectively with the UNIMERCE Seller Centre, where you can track orders, manage customers, and analyze your shop’s performance. Share your products across social media platforms to build your online reputation through positive reviews and ratings. UNIMERCE is completely free to join, so start selling today!</p>
+
+      
+      <h3>Visit the UNIMERCE Blog</h3>
+      <p>Stay updated on the latest must-have products, popular trends, and shopping tips by visiting the UNIMERCE Blog. Discover articles on a range of topics, from fashion and beauty to lifestyle and tech. Keep up with the latest trends and get the scoop on what’s new at UNIMERCE!</p>
+      
+    </div>
+
+      <div class="footer-container">  
+          <!-- Quick Links Section -->
+          <div class="sectioncont">
+              <h4>Quick Links</h4>
+              <a href="#about">About Us</a>
+              <a href="#services">Services</a>
+              <a href="#contact">Contact Us</a>
+              <a href="#privacy">Privacy Policy</a>
+          </div>
+  
+          <!-- Resources Section -->
+          <div class="sectioncont">
+              <h4>Resources</h4>
+              <a href="#faq">FAQ</a>
+              <a href="#blog">Blog</a>
+              <a href="#support">Support</a>
+          </div>
+  
+          <!-- Newsletter Subscription Section -->
+          <div class="newsletter">
+              <h4>Subscribe to Our Newsletter</h4>
+              <div class="subscribe-form">
+                  <input type="email" placeholder="Enter your email">
+                  <button class="subscribe-btn">Subscribe</button>
+              </div>
+              <p>Stay updated with our latest news and offers.</p>
+          </div>
+      </div>
+
+  <div class="payment-methods">
+      <h2>Payments</h2>
+      <div class="logos-container">
+          <div class="logos">
+              <img src="https://static-00.iconduck.com/assets.00/visa-icon-2048x1313-o6hi8q5l.png" alt="Visa Logo">
+              <img src="https://thumbs.dreamstime.com/b/mastercard-logo-blue-background-vector-image-eps-72682456.jpg" alt="MasterCard Logo">
+              <img src="https://serious-studio.com/wp-content/uploads/Gcash-Brand-Identity-01.png" alt="Gcash Logo">
+              <img src="https://cdn.manilastandard.net/wp-content/uploads/2022/05/maya.jpg" alt="Maya Logo">
+          </div>          
+  </div>
+  
+      <!-- Footer Design Section -->
+      <div class="footer-design">
+          <div class="footer-text">
+              &copy; 2024 UNIMERCE. All Rights Reserved.
+          </div>
+      </div>
+  </footer>
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>
