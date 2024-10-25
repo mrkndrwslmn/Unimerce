@@ -4,16 +4,12 @@ from flask import session, redirect, url_for, flash
 from dotenv import load_dotenv
 load_dotenv()
 import mysql.connector
-<<<<<<< HEAD
-import jinja2
-=======
 from collections import defaultdict
 from datetime import datetime, date
 from werkzeug.utils import secure_filename
 import smtplib
 from email.message import EmailMessage
 import random
->>>>>>> 81bccb2 (seller_dashboard edited)
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'default_secret_key')
@@ -27,9 +23,6 @@ def get_db_connection():
     )
     return connection
 
-<<<<<<< HEAD
-def product(product_id):
-=======
 def fetch_product(product_id):
     conn = get_db_connection()  
     if conn is None:
@@ -99,7 +92,6 @@ def add_to_wishlist():
     account_id = request.form['accountID']
     product_id = request.form['productID']
     
->>>>>>> 81bccb2 (seller_dashboard edited)
     conn = get_db_connection()
     cursor = conn.cursor()
     
@@ -160,31 +152,6 @@ def get_products_with_variations(seller_id):
     
     cursor = conn.cursor()
 
-<<<<<<< HEAD
-    # Fetch product details using product_id
-    cursor.execute("SELECT name, image_url, rating, price, description FROM products WHERE id = %s", (product_id,))
-    product = cursor.fetchone()  # Fetch a single product
-
-    cursor.close()
-    conn.close()
-
-    # Check if the product exists
-    if product:
-        return render_template('product.html', product=product)
-    else:
-        return render_template('404.html'), 404  # Return a 404 page if the product is not found
-
-@app.route('/get_categories')
-def get_categories():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    # Execute a query to fetch categories from your database
-    cursor.execute("SELECT category_Name FROM categories")  # Ensure 'category_Name' is the correct column name
-
-    # Fetch all the rows and extract the category names
-    categories = [row[0] for row in cursor.fetchall()]
-=======
     # Fetch all products and their associated sellers and variations
     cursor.execute("""
     SELECT 
@@ -209,7 +176,6 @@ def get_categories():
     ORDER BY 
         p.productName ASC  -- You can adjust the order as needed
     """)
->>>>>>> 81bccb2 (seller_dashboard edited)
 
     all_products_data = cursor.fetchall()  # Fetch all product data
     
@@ -262,12 +228,6 @@ def get_top_sales():
     
     cursor = conn.cursor()
 
-<<<<<<< HEAD
-    # Adjust your SQL query to match your schema
-    cursor.execute("SELECT productName, imgURL, productRating, productPrice FROM products ORDER BY productRating DESC LIMIT 10")
-    
-    top_sales = cursor.fetchall()
-=======
     # Fetch all products and their sales data
     cursor.execute(""" 
     SELECT 
@@ -292,7 +252,6 @@ def get_top_sales():
 
     all_products_data = cursor.fetchall()  # Fetch all product data
     
->>>>>>> 81bccb2 (seller_dashboard edited)
     cursor.close()
     conn.close()
 
@@ -1486,9 +1445,6 @@ def success():
 # Homepage route
 @app.route('/')
 def homepage():
-<<<<<<< HEAD
-    return render_template('homepage.html')
-=======
     current_date = datetime.now().date()
     top_sales = get_top_sales()  # Get your products
     categories = get_categories_and_subcategories()
@@ -1497,7 +1453,6 @@ def homepage():
     user = session.get('username')  # Retrieve username from the session
     
     return render_template('homepage.html', top_sales=top_sales, categories=categories, deals=deals, current_date=current_date, user=user)
->>>>>>> 81bccb2 (seller_dashboard edited)
 
 if __name__ == '__main__':
     app.run(debug=True)
