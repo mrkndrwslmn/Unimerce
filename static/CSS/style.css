@@ -84,7 +84,7 @@ header {
     padding: 10px 15px;
     font-size: 16px;
     border: none;
-    background-color: #333;
+    background-color: var(--primary-color);
     color: #fff;
     border-radius: 5px;
     cursor: pointer;
@@ -298,7 +298,7 @@ body {
 
 /* Hover effect for menu items */
 .menu-items li a:hover {
-    background-color: #162623; /* Background color on hover */
+    background-color: var(--primary-color); /* Background color on hover */
     color: #162623; /* Change text color on hover */
     color: #295255; /* Change text color on hover, if desired */
 }
@@ -450,7 +450,6 @@ body {
     width: 100%;
     padding: 20px;
     background-color: #f8f8f8; /* Light background color */
-    box-sizing: border-box; /* Ensures padding is included in width */
 }
 
 /* Flexbox layout for the banner */
@@ -486,7 +485,7 @@ body {
 }
 
 /* Collection text */
-.collectio {
+.collection {
     font-size: 1.5rem;
     color: #555; /* Subtle color */
     margin-bottom: 10px;
@@ -509,7 +508,7 @@ body {
 
 /* Button styling */
 .home_txt button {
-    background-color: #577877; /* Main button color */
+    background-color: var(--primary-color); /* Main button color */
     color: #fff; /* Text color */
     border: none;
     padding: 10px 20px;
@@ -533,40 +532,84 @@ body {
 
 
 /* //........ Collections ........// */
-.collections-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
 
 .collections {
     display: flex;
-    justify-content: flex-start;
-    flex-wrap: nowrap;
+    justify-content: flex-start; /* Align items to the left */
+    flex-wrap: nowrap; /* Allow items to wrap to the next line if they exceed the width */
     overflow-x: hidden; /* Hides scrollbar */
     scroll-behavior: smooth;
-    margin-top: 65px;
-    width: 100%;
+    width: 100%; /* Ensure it takes the full width */
     padding: 20px 0;
+    box-shadow: #000;    
+}
+
+.content {
+    flex: 1 1 330px; /* Grow and shrink, starting with a base width of 330px */
+    margin: 10px; /* Adjust margin as necessary */    
+    max-width: 250px; /* Optional: set a max width for each item */
+    position: relative;    
+}
+
+.collections-wrapper {
+    max-width: 1200px;  /* Adjust max width as needed */
+    margin: 0 auto;     /* Center the container */
+    padding: 20px;      /* Add padding */
+    position: relative;
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Align children to the start (left) */
+    margin-bottom: 20px; /* Add spacing below the wrapper if needed */
+}
+.collections-wrapper h2 {
+    margin-top: 65px;
+    margin-bottom: 20px;
+    margin-left: 3rem;
+    font-size: 3rem;
+}
+
+.buttons {
+    display: flex; /* Use flexbox to arrange buttons */
+    justify-content: flex-end; /* Align buttons to the right */
+    width: 100%; /* Ensure the buttons take the full width */
+    margin-top: 20px; /* Optional: Add space above the buttons */
 }
 
 .scroll-btn {
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
     background-color: var(--primary-color);
     color: white;
     border: none;
     padding: 10px 20px;
     cursor: pointer;
     font-size: 1.5rem;
+    align-items: flex-end;
     z-index: 1000; /* Ensure the button appears above other elements */
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); /* Optional: Adds a shadow for visibility */
+    margin-top: 20px; /* Add space above the buttons */
+    margin-left: 1rem;
+}
+
+.scroll-btn.disabled {
+    background-color: #ccc; /* Gray background for disabled state */
+    color: #666; /* Darker gray for text color */
+    cursor: not-allowed; /* Change cursor to indicate that the button is not clickable */
+    box-shadow: none; /* Remove shadow */
+}
+
+#scroll-left {
+    left: 10px; /* Position left button */
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%); /* Adjust for vertical centering */
+}
+
+#scroll-right {
+    right: 10px; /* Position right button */
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%); /* Adjust for vertical centering */
 }
 
 .scroll-btn:hover {
-    background-color: var(--secondary-color);
+    background-color: var(--light-green);
 }
 
 .content {
@@ -579,6 +622,7 @@ body {
 .content::after {
     content: "";
     position: absolute;
+    border-radius: 15px;
     top: 0;
     left: 0%;
     width: 100%;
@@ -594,8 +638,9 @@ body {
 
 .content img {
     width: 100%;
-    height: 300px;
+    height: 250px;
     object-fit: cover;
+    border-radius: 15px;
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
 
@@ -822,77 +867,132 @@ body {
 
 /* //........ seller  ........// */
 
+.seller .best-p1 {
+    width: 100%;  /* Make the width responsive */
+    max-width: 250px; /* Set a maximum width */
+    height: 370px; /* Allow height to adjust based on content */
+    aspect-ratio: 1 / 3; /* Maintain the 1:3 aspect ratio */
+    background-color: #fefefe;  /* Set the background color */
+    border: 1px solid #ccc; /* Add an outline */
+    border-radius: 8px; /* Optional: Add rounded corners */
+    display: flex;
+    flex-direction: column; /* Arrange child elements vertically */
+    padding: 10px; /* Add padding around the content */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+    margin: 10px; /* Space between product containers */
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+.seller .image-container {
+    display: flex; /* Use flexbox for centering */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    width: 100%; /* Make the image container fill the width of its parent */
+    padding: 0; /* Padding around the image */
+    margin-bottom: 1rem; /* Space below the image container */
+    border-radius: 8px; /* Rounded corners for the image container */
+    background-color: #fefefe; /* Match the container's background */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add shadow */
+    overflow: hidden; /* Ensure the image does not overflow the container */
+}
+
+.seller .best-p1 img {
+    width: 100%; /* Make the image take full width of the container */
+    height: auto; /* Keep the aspect ratio */
+    object-fit: cover; /* Ensure the image covers the space, maintaining its aspect ratio */
+    aspect-ratio: 1 / 3; /* Set the aspect ratio to height greater than width */
+    max-height: 100%; /* Set a maximum height for the image (adjust as needed) */
+}
+
+.seller-container {
+    max-width: 1200px;  /* Adjust max width as needed */
+    margin: 0 auto;     /* Center the container */
+    padding: 20px;      /* Add padding */
+}
+
 .best-seller {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;  /* Allow wrapping for multiple items */
+    margin-bottom: 20px; /* Space between items */
 }
 
-.best-seller .red {
-    color: var(--primary-color);
-    cursor: pointer;
-}
-
-.best-seller .blue {
-    color: #8989ce;
-    cursor: pointer;
-}
-
-.best-seller .white {
-    color: var(--light-black);
-    cursor: pointer;
-}
-
-.best-seller .grey {
-    color: grey;
-    cursor: pointer;
-}
-
-.best-seller .brown {
-    color: rgb(175, 53, 53);
-    cursor: pointer;
-}
-
-.best-seller .yellow {
-    color: #ffff00;
-    cursor: pointer;
-}
-
-.best-seller .orange {
-    color: #ffa500;
-    cursor: pointer;
-}
-
+.best-seller .red,
+.best-seller .blue,
+.best-seller .white,
+.best-seller .grey,
+.best-seller .brown,
+.best-seller .yellow,
+.best-seller .orange,
 .best-seller .green {
-    color: #008000;
     cursor: pointer;
 }
+
+.best-seller .red { color: var(--primary-color); }
+.best-seller .blue { color: #8989ce; }
+.best-seller .white { color: var(--light-black); }
+.best-seller .grey { color: grey; }
+.best-seller .brown { color: rgb(175, 53, 53); }
+.best-seller .yellow { color: #ffff00; }
+.best-seller .orange { color: #ffa500; }
+.best-seller .green { color: #008000; }
 
 .seller h2 {
     margin-top: 65px;
     margin-bottom: 20px;
+    font-size: 3rem;
 }
 
-.seller .best-p1 {
-    width: 250px;
-    height: 370px;
-    /* border: 2px solid black; */
+.seller .best-p1-txt {
+    align-self: flex-start; /* Align text to the start (left) of the container */
+    text-align: left; /* Ensure text is aligned left */
+    width: 100%; /* Ensure the text takes full width of the container */
 }
 
 .seller .best-p1 img {
-    height: 250px;
-    width: 250px;
+    height: 250px; /* Set fixed height for the image */
+    width: 250px; /* Set fixed widthuj for the image */
+    object-fit: cover; /* Ensure the image covers the space, maintaining its aspect ratio */
+    border-radius: 8px; /* Optional: Add rounded corners to the image */
 }
 
 .seller .best-p1 .price {
-    display: flex;
-    justify-content: space-between;
+    font-size: 1.5rem;
+    font-weight: bold; /* Make the price bold for emphasis */
+    text-align: left; /* Align price to the left */
+    color: red;
 }
 
 .seller .best-p1 .price .colors input[type="radio"] {
     color: #000;
     background-color: #000;
 }
+
+.seller .product-sold {
+    color: red;
+}
+
+.colors {
+    display: flex;
+    margin-bottom: 10px; /* Space below the color options */
+}
+
+.colors i {
+    margin-right: 5px; /* Space between color circles */
+    cursor: pointer; /* Pointer cursor for interactivity */
+}
+
+.sizes, .storage {
+    margin-bottom: 10px; /* Space below size and storage options */
+}
+
+.sizes select, .storage select {
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
 
 .best-seller .buy-now a {
     text-decoration: none;
@@ -929,6 +1029,7 @@ body {
 .best-seller .add-cart button:hover a {
     color: #f05e8a;
 }
+
 
 
 /* .best-seller .add-cart button {
