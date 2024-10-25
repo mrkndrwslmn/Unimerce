@@ -4,7 +4,16 @@ from flask import session, redirect, url_for, flash
 from dotenv import load_dotenv
 load_dotenv()
 import mysql.connector
+<<<<<<< HEAD
 import jinja2
+=======
+from collections import defaultdict
+from datetime import datetime, date
+from werkzeug.utils import secure_filename
+import smtplib
+from email.message import EmailMessage
+import random
+>>>>>>> 81bccb2 (seller_dashboard edited)
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'default_secret_key')
@@ -18,12 +27,140 @@ def get_db_connection():
     )
     return connection
 
+<<<<<<< HEAD
 def product(product_id):
-    conn = get_db_connection()
+=======
+def fetch_product(product_id):
+    conn = get_db_connection()  
     if conn is None:
-        return []
+        return None  
+
     cursor = conn.cursor()
 
+    cursor.execute(""" 
+        SELECT 
+            p.productID,
+            p.sellerID,
+            p.productName, 
+            p.imgURL, 
+            p.productRating, 
+            p.productPrice, 
+            p.productSold,
+            v.variationType, 
+            v.variationValue, 
+            v.stockQuantity, 
+            s.shopName
+        FROM 
+            products p 
+        LEFT JOIN 
+            variations v ON p.productID = v.productID 
+        LEFT JOIN 
+            sellers s ON p.sellerID = s.sellerID
+        WHERE 
+            p.productID = %s
+    """, (product_id,))
+
+    product_data = cursor.fetchall() 
+
+
+    if product_data:
+        product_info = {
+            'id': product_data[0][0],
+            'sellerID': product_data[0][1],
+            'name': product_data[0][2],
+            'image': product_data[0][3],
+            'rating': product_data[0][4],
+            'price': product_data[0][5],
+            'sold': product_data[0][6],
+            'seller': product_data[0][10],  # Add seller's shop name to the product_info
+            'variations': []
+        }
+
+        # Iterate through variations
+        for row in product_data:
+            # Check if variationType is not None
+            if row[7] is not None:
+                variation_info = {
+                    'type': row[7],
+                    'value': row[8],
+                    'stock': row[9]
+                }
+                product_info['variations'].append(variation_info)
+
+        return product_info  
+
+    cursor.close()
+    conn.close()
+
+    return None  
+
+@app.route('/add_to_wishlist', methods=['POST'])
+def add_to_wishlist():
+    account_id = request.form['accountID']
+    product_id = request.form['productID']
+    
+>>>>>>> 81bccb2 (seller_dashboard edited)
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Check if the product is already in the wishlist
+    cursor.execute('SELECT * FROM wishlist WHERE accountID = %s AND productID = %s', (account_id, product_id))
+    existing_item = cursor.fetchone()
+    
+    if not existing_item:
+        cursor.execute('INSERT INTO wishlist (accountID, productID) VALUES (%s, %s)', (account_id, product_id))
+        conn.commit()
+    
+    cursor.close()
+    conn.close()
+    
+    return redirect(url_for('wishlist'))
+
+@app.route('/remove_from_wishlist', methods=['POST'])
+def remove_from_wishlist():
+    wishlist_id = request.form['wishlistID']
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute('DELETE FROM wishlist WHERE wishlistID = %s', (wishlist_id,))
+    conn.commit()
+    
+    cursor.close()
+    conn.close()
+    
+    return redirect(url_for('wishlist'))
+
+@app.route('/wishlist', methods=['GET'])
+def wishlist():
+    account_id = request.args.get('accountID')  # Get the account ID from query parameters
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Get the wishlist items for the user
+    cursor.execute('''
+        SELECT w.wishlistID, p.productID, p.productName, p.imgURL
+        FROM wishlist w
+        JOIN products p ON w.productID = p.productID
+        WHERE w.accountID = %s
+    ''', (account_id,))
+    
+    wishlist_items = cursor.fetchall()
+    
+    cursor.close()
+    conn.close()
+
+    return render_template('wishlist.html', wishlist_items=wishlist_items)
+
+def get_products_with_variations(seller_id):
+    conn = get_db_connection()  # Use the same connection method
+    if conn is None:
+        return []
+    
+    cursor = conn.cursor()
+
+<<<<<<< HEAD
     # Fetch product details using product_id
     cursor.execute("SELECT name, image_url, rating, price, description FROM products WHERE id = %s", (product_id,))
     product = cursor.fetchone()  # Fetch a single product
@@ -47,7 +184,35 @@ def get_categories():
 
     # Fetch all the rows and extract the category names
     categories = [row[0] for row in cursor.fetchall()]
+=======
+    # Fetch all products and their associated sellers and variations
+    cursor.execute("""
+    SELECT 
+        p.productID,
+        p.sellerID,
+        p.productName, 
+        p.productDesc,  -- Include description
+        p.imgURL, 
+        p.productRating, 
+        p.productPrice,
+        p.productSold,
+        v.variationID,
+        v.variationType,
+        v.variationValue,
+        v.stockQuantity,
+        v.productSold AS variationProductSold,
+        v.productPrice AS variationPrice
+    FROM 
+        products p
+    LEFT JOIN 
+        variations v ON p.productID = v.productID
+    ORDER BY 
+        p.productName ASC  -- You can adjust the order as needed
+    """)
+>>>>>>> 81bccb2 (seller_dashboard edited)
 
+    all_products_data = cursor.fetchall()  # Fetch all product data
+    
     cursor.close()
     conn.close()
 
@@ -97,10 +262,37 @@ def get_top_sales():
     
     cursor = conn.cursor()
 
+<<<<<<< HEAD
     # Adjust your SQL query to match your schema
     cursor.execute("SELECT productName, imgURL, productRating, productPrice FROM products ORDER BY productRating DESC LIMIT 10")
     
     top_sales = cursor.fetchall()
+=======
+    # Fetch all products and their sales data
+    cursor.execute(""" 
+    SELECT 
+        p.productID,
+        p.sellerID,
+        p.productName, 
+        p.imgURL, 
+        p.productRating, 
+        p.productPrice, 
+        p.productSold,
+        COALESCE(pr.discountRate, 0) AS discountRate,
+        pr.startDate,
+        pr.endDate
+    FROM 
+        products p
+    LEFT JOIN 
+        promotions pr ON p.productID = pr.productID
+    ORDER BY 
+        p.productSold DESC
+    LIMIT 10
+""")
+
+    all_products_data = cursor.fetchall()  # Fetch all product data
+    
+>>>>>>> 81bccb2 (seller_dashboard edited)
     cursor.close()
     conn.close()
 
@@ -1294,7 +1486,18 @@ def success():
 # Homepage route
 @app.route('/')
 def homepage():
+<<<<<<< HEAD
     return render_template('homepage.html')
+=======
+    current_date = datetime.now().date()
+    top_sales = get_top_sales()  # Get your products
+    categories = get_categories_and_subcategories()
+    deals = fetch_deals()
+
+    user = session.get('username')  # Retrieve username from the session
+    
+    return render_template('homepage.html', top_sales=top_sales, categories=categories, deals=deals, current_date=current_date, user=user)
+>>>>>>> 81bccb2 (seller_dashboard edited)
 
 if __name__ == '__main__':
     app.run(debug=True)
