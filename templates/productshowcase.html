@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='shopping_cart.css') }}">
+    <title>{{ product.productName }} - Product Showcase</title>
+</head>
+<body>
+    <div class="main-product-container">
+        <div class="left-container">
+            <img src="{{ product.imgURL }}" alt="{{ product.productName }}" class="product-image">
+        </div>
+
+        <div class="right-container">
+            <h1 class="product-name">{{ product.productName }}</h1>
+            <div class="product-rating">
+                {% for i in range(1, 6) %}
+                    {% if i <= product.productRating %}
+                        <i class='bx bxs-star'></i>
+                    {% else %}
+                        <i class='bx bx-star'></i>
+                    {% endif %}
+                {% endfor %}
+                <span class="sold-count">({{ product.productSold }} sold)</span>
+            </div>
+
+            <div class="variations">
+                <h3>Variations:</h3>
+                <select name="variation" id="variation-select">
+                    {% for variation in product.variations %}
+                        <option value="{{ variation.variationID }}">{{ variation.variationValue }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="quantity-container">
+                <h3>Quantity:</h3>
+                <button type="button" class="quantity-button" id="minus-btn">-</button>
+                <input type="number" id="quantity" value="1" min="1">
+                <button type="button" class="quantity-button" id="plus-btn">+</button>
+            </div>
+
+            <div class="action-buttons">
+                <button type="button" class="btn btn-add-to-cart">Add to Cart</button>
+                <button type="button" class="btn btn-buy-now">Buy Now</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Optional JavaScript for quantity adjustment
+        document.getElementById('plus-btn').onclick = function() {
+            var quantityInput = document.getElementById('quantity');
+            quantityInput.value = parseInt(quantityInput.value) + 1;
+        };
+
+        document.getElementById('minus-btn').onclick = function() {
+            var quantityInput = document.getElementById('quantity');
+            if (parseInt(quantityInput.value) > 1) {
+                quantityInput.value = parseInt(quantityInput.value) - 1;
+            }
+        };
+    </script>
+</body>
+</html>

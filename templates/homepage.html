@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='ic/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+            <img src="images/logo.png" alt="">
+        </div>
+
+        <div class="header-controls">
+            <select id="categoryDropdown">
+                <option value="">Select Category</option>
+            </select>
+        
+            <input type="text" placeholder="Search.." class="search-bar">
+        
+            <button type="button" class="search-button">Search</button>
+        </div>
+
+        <div class="navbar-container">
+            <input type="checkbox" name="" id="checkbox">
+            <div class="hamburger-lines">
+                <span class="line line1"></span>
+                <span class="line line2"></span>
+                <span class="line line3"></span>
+            </div>
+
+            <ul class="menu-items">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#sellers">Shop</a></li>
+                <li><a href="#news">Blog</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            
+        </div>
+    </nav>
+
+        <div class="campain_banner">
+            <div class="home_page">
+                <div class="home_img">
+                    <img src="images/banner_image.png" alt="img">
+                </div>
+                <div class="home_txt">                    
+                    <p class="collectio ">Holiday Season</p>
+                    <h2>12.12 <br>SALE</h2>
+                    <div class="home_label ">
+                        <p>It is the season of giving. We are giving away thousands of vouchers.</p>
+                    </div>
+                    <button><a href="#sellers">SHOP NOW</a><i class='bx bx-right-arrow-alt'></i></button>
+                    
+                </div>
+            </div>
+        </div>
+
+        <section id="collection">
+            <div class="collections-wrapper"> <!-- Wrapper for positioning -->
+                <div class="collections container" id="collections-container">
+                <div class="content">
+                    <img src="https://img.freepik.com/free-photo/modern-stationary-collection-arrangement_23-2149309643.jpg" alt="img" />
+                    <div class="img-content">
+                        <p>Electronics</p>
+                        <button><a href="electronics.html">SHOP NOW</a></button>
+                    </div>
+                </div>
+                <div class="content">
+                    <img src="https://epiprodux.com/blog/wp-content/uploads/2023/03/mr_epiprodux_fashion_products_and_brands_under_management_9e6d2468-55a8-4f48-86cb-9b1b2841fac1.png" alt="img" />
+                    <div class="img-content">
+                        <p>Fashion</p>
+                        <button><a href="fashion.html">SHOP NOW</a></button>
+                    </div>
+                </div>
+                <div class="content">
+                    <img src="https://i.ebayimg.com/images/g/DHEAAOSwffFi7oiZ/s-l1200.jpg" alt="img" />
+                    <div class="img-content">
+                        <p>Home & Living</p>
+                        <button><a href="homeliving.html">SHOP NOW</a></button>
+                    </div>
+                </div>
+                <div class="content">
+                    <img src="https://media.istockphoto.com/id/1141698953/photo/spa-products-for-home-skin-care.jpg?s=612x612&w=0&k=20&c=HxtIt73MwCZBY0APYngv0poZCEtyDhckTuT8SxJSxPE=" alt="img" />
+                    <div class="img-content">
+                        <p>Health & Beauty</p>
+                        <button><a href="homeliving.html">SHOP NOW</a></button>
+                    </div>
+                </div>
+                <div class="content">
+                    <img src="https://media.istockphoto.com/id/166639415/photo/assorted-sports-equipment-on-a-white-background.jpg?s=612x612&w=0&k=20&c=iskEFV2v637MepdnGNOHdEHLuOV8SutGdBcbpGCyLb0=" alt="img" />
+                    <div class="img-content">
+                        <p>Sports & Outdoors</p>
+                        <button><a href="homeliving.html">SHOP NOW</a></button>
+                    </div>
+                </div>
+                <div class="content">
+                    <img src="https://gembah.com/wp-content/uploads/2022/08/Pet_ProductHeader_1920x1080-1.jpg" alt="img" />
+                    <div class="img-content">
+                        <p>Toys & Games</p>
+                        <button><a href="homeliving.html">SHOP NOW</a></button>
+                    </div>
+                </div>
+                <div class="content">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUIC0_tF_F3KDztfDxYqsjmmZsNrhWBqToUA&s" alt="img" />
+                    <div class="img-content">
+                        <p>Books & Stationery</p>
+                        <button><a href="homeliving.html">SHOP NOW</a></button>
+                    </div>
+                </div>
+                <div class="content">
+                    <img src="https://www.shutterstock.com/image-illustration/auto-parts-logo-3d-render-600nw-1935631936.jpg" alt="img" />
+                    <div class="img-content">
+                        <p>Automotive</p>
+                        <button><a href="homeliving.html">SHOP NOW</a></button>
+                    </div>
+                </div>
+                <div class="content">
+                    <img src="https://media.istockphoto.com/id/864501328/photo/baby-products-symbols-for-newborns.jpg?s=612x612&w=0&k=20&c=6uqZgQOSUxOMsHheFlfrD1VTl8sFpAsYRNUchsIkHsg=" alt="img" />
+                    <div class="img-content">
+                        <p>Baby & Kids</p>
+                        <button><a href="homeliving.html">SHOP NOW</a></button>
+                    </div>
+                </div>
+                <div class="content">
+                    <img src="https://www.ikea.com/ext/ingkadam/m/3de6d5c7d5066fc/original/PH197960.JPG?f=s" alt="img" />
+                    <div class="img-content">
+                        <p>Pets</p>
+                        <button><a href="homeliving.html">SHOP NOW</a></button>
+                    </div>                    
+            </div>
+                <button class="scroll-btn" id="scroll-right">→</button>
+        </div>
+    </div>            
+</section>
+
+<section id="sellers">
+    <div class="seller container">
+        <h2>Top Sales</h2>
+        <div class="best-seller">
+            {% for product in top_sales %}
+                <div class="best-p1">
+                    <img src="{{ product[1] }}" alt="{{ product[0] }}">
+                    <div class="best-p1-txt">
+                        <div class="name-of-p">
+                            <p>{{ product[0] }}</p>
+                        </div>
+                        <div class="rating">
+                            {% for i in range(1, 6) %}
+                                {% if i <= product[2] %}
+                                    <i class='bx bxs-star'></i>  <!-- Full star -->
+                                {% else %}
+                                    <i class='bx bx-star'></i>  <!-- Empty star -->
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="price">
+                            &dollar;{{ product[3] }}
+                            <div class="colors">
+                                <i class='bx bxs-circle red'></i>
+                                <i class='bx bxs-circle blue'></i>
+                                <i class='bx bxs-circle white'></i>
+                            </div>
+                        </div>
+                        <div class="buy-now">
+                            <button><a href="{{ url_for('product', product_id=product[0]) }}">Buy Now</a></button>
+                        </div>                        
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+
+
+    <footer class="bg-dark text-white text-center py-3">
+        <p>© CCScent 2023. All Rights Reserved.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

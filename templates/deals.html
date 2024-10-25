@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deals of the Week</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
+</head>
+<body>
+    <h1>Deals of the Week</h1>
+    <div class="deals-container">
+        {% if deals %}
+            {% for promotion in deals %}
+                <div class="deal">
+                    <img src="{{ promotion.img_url }}" alt="{{ promotion.product_name }}" class="product-image">
+                    <h3 class="product-name">{{ promotion.product_name }}</h3>
+                    <p class="product-description">{{ promotion.product_desc }}</p>
+                    <p class="discounted-price">${{ promotion.discounted_price }}</p>
+                    <p class="original-price"><strike>${{ promotion.original_price }}</strike></p>
+                    <p>Rating: {{ promotion.product_rating }} stars</p>
+                    <p>Sold: {{ promotion.product_sold }}</p>
+                    <p>Discount Rate: {{ promotion.discount_rate }}%</p>
+                    <p>Available from {{ promotion.start_date }} to {{ promotion.end_date }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No deals available at this time.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

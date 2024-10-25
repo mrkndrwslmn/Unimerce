@@ -1,0 +1,323 @@
+:root {
+    /* Color variables */
+    --primary-color: #295255;
+    --dark-green: #162623;
+    --light-green: #577877;
+    --bluewhite: #f0f5f7;
+    --white: #fff;
+    --grey: #aaa;
+}
+
+/* General container for the profile */
+.user-profile-container {
+    display: flex;
+    max-width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f8f9fa; /* Light background for the container */
+}
+
+/* Sidebar styles */
+.user-profile-sidebar {
+    width: 250px; /* Fixed width for sidebar */
+    background-color: var(--white); /* Dark background for sidebar */
+    margin-right: 15px;
+    padding: 20px;
+    color: #fff; /* White text */
+    height: 100%; /* Make sidebar full height */
+    display: flex;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-profile-nav {
+    flex-direction: column;
+    list-style: none; /* Remove default list styling */
+    padding: 0;
+    margin: 0; /* Remove default margin */
+    flex-grow: 1; /* Allow nav to grow */
+}
+
+.user-profile-nav li {
+    margin-bottom: 10px; /* Spacing between items */
+}
+
+.user-profile-nav a {
+    color: var(--dark-green); /* White text for links */
+    text-decoration: none; /* Remove underline */
+    padding: 10px;
+    display: block; /* Block display for links */
+    border-radius: 4px; /* Rounded corners */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.user-profile-container p {
+    font-style: italic;
+    font-size: 1rem;
+    color: #aaa;
+}
+
+.user-profile-nav a:hover {
+    background-color: var(--light-green); /* Darker background on hover */
+    color: var(--white);
+}
+
+.user-profile-nav .active {
+    background-color: var(--light-green); /* Highlight active link */
+    color: var(--white);
+}
+
+.form-group-container {
+    margin-top: 55px;
+}
+
+/* Content area styles */
+.user-profile-content {
+    flex: 1; /* Take up remaining space */
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background-color: #fff; /* White background for content */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    position: relative;
+}
+
+/* Header styles */
+.user-profile-content h2 {
+    margin-bottom: 20px;
+    color: #343a40; /* Darker text color for headings */
+}
+
+/* Form styles */
+.user-profile-form-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.name-fields-container {
+    display: flex;
+    gap: 20px; /* Space between the fields */
+    flex-wrap: wrap; /* Allows fields to stack on smaller screens */
+}
+
+.user-profile-form-group main-label {
+    display: block; /* Block display for labels */
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    color: #495057; /* Slightly lighter color for labels */
+}
+
+.user-profile-form-group label {
+    display: block; /* Block display for labels */
+    margin-bottom: 5px;
+    margin-top: 5px;
+    color: #495057; /* Slightly lighter color for labels */
+}
+
+.user-profile-form-group input,
+.user-profile-form-group select {
+    width: 100%; /* Full width for inputs */
+    padding: 10px; /* Padding for inputs */
+    border: 1px solid #ced4da; /* Light border */
+    border-radius: 4px; /* Rounded corners */
+    box-sizing: border-box; /* Include padding in width */
+}
+
+.user-profile-form-group input:focus,
+.user-profile-form-group select:focus {
+    border-color: #007bff; /* Change border color on focus */
+    outline: none; /* Remove default outline */
+}
+
+/* Image container styles */
+#image-input-container {
+    display: block; /* Ensure it's a block element */
+    position: relative;
+}
+
+.user-profile-image-container {
+    margin-bottom: 20px;
+    text-align: center; /* Center image and label */
+    width: 100%;
+    max-width: 250px; /* Limit image size */
+    height: 250px;
+    position: relative;
+    margin: 0 auto;
+}
+
+.user-profile-image-container img {    
+    width: 100%;
+    height: 100%;
+    border-radius: 50%; /* Circular profile image */
+    border: 1px solid var(--dark-green);
+    object-fit: cover;
+}
+
+.user-profile-image-container input[type="file"] {
+    margin-top: 10px; /* Space above file input */
+}
+
+/* Button styles */
+.user-profile-save-btn {
+    background-color: var(--light-green); /* Primary button color */
+    color: #fff; /* White text */
+    border: none; /* Remove border */
+    padding: 10px 15px; /* Padding for button */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+.user-profile-save-btn:hover {
+    background-color: var(--primary-color); /* Darker button on hover */
+}
+
+/* Address form styles */
+#address-form {
+    margin-top: 30px;
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 1px solid #ced4da; /* Light border for address form */
+    border-radius: 4px; /* Rounded corners */
+    background-color: #f8f9fa; /* Light background */
+}
+
+#address-form h3 {
+    margin-bottom: 15px;
+}
+
+/* Address form input styles */
+#address-form .user-profile-form-group {
+    margin-bottom: 10px; /* Spacing in address form */
+    margin-top: 10px;
+}
+
+.edit-button {
+    background-color: var(--light-green);
+    color: white; /* White text */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 5px 10px; /* Padding */
+    cursor: pointer; /* Pointer cursor on hover */
+    margin-top: 10px; /* Space between image and button */
+}
+
+.edit-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+.custom-file-upload {
+    display: inline-block;
+    padding: 10px 15px;
+    cursor: pointer;
+    border: 2.5px solid #ccc; /* Change this to your desired color */
+    border-radius: 5px;
+    margin-top: 10px; /* Add some spacing above */
+    text-align: center; /* Center the text */
+}
+
+.custom-file-upload:hover {
+    background-color: var(--dark-green); /* Darken on hover */
+    color: var(--bluewhite);
+}
+
+.user-profile-image-container {
+    position: relative; /* Ensures proper positioning of child elements */
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4; /* Light background for contrast */
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    color: #333; /* Darker text color for the title */
+    font-size: 24px; /* Slightly larger font size */
+    margin-bottom: 20px; /* Space below the title */
+}
+
+form {
+    display: flex; /* Flexbox layout for form elements */
+    flex-direction: column; /* Arrange children in a column */
+}
+
+div {
+    margin-bottom: 15px; /* Space between form fields */
+}
+
+label {
+    font-weight: bold; /* Bold labels for clarity */
+    margin-bottom: 5px; /* Space below labels */
+}
+
+label1 {
+    font-size: 0.8rem;
+    margin-bottom: 5px; /* Space below labels */
+}
+
+input[type="text"] {
+    width: 100%; /* Full-width inputs */
+    padding: 10px; /* Padding for inputs */
+    border: 1px solid #ccc; /* Light border */
+    border-radius: 4px; /* Rounded borders for inputs */
+    box-sizing: border-box; /* Include padding and border in total width */
+}
+
+input[type="text"]:focus {
+    border-color: var(--light-green); /* Highlight border color on focus */
+    outline: none; /* Remove default outline */
+}
+
+.btn {
+    padding: 10px 15px; /* Button padding */
+    border: none; /* Remove default border */
+    border-radius: 4px; /* Rounded button corners */
+    cursor: pointer; /* Pointer on hover */
+    display: inline-block; /* Prevents the button from stretching */
+}
+
+.btn-primary {
+    background-color: var(--primary-color); /* Primary button color */
+    color: white; /* Text color */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.btn-primary:hover {
+    background-color: var(--light-green); /* Darker shade on hover */
+}
+
+.add-address-form {
+    margin-top: 20px;          /* Space above the button */
+    display: flex;             /* Enable flexbox */
+    justify-content: flex-end; /* Align contents to the right */
+}
+
+a {
+    margin-top: 20px; /* Space above the back link */
+    display: inline-block; /* Allow margin to take effect */
+    color: var(--light-green); /* Link color */
+    text-decoration: none; /* Remove underline */
+}
+
+a:hover {
+    text-decoration: underline; /* Underline on hover */
+}
+
+btn-success {
+    max-width: 30%;
+}
+
+.logout-btn {
+    background: none;
+    border: none;
+    color: red;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-left: 10px; /* Adjust spacing between buttons */
+}
+
+.logout-btn:hover {
+    text-decoration: underline; /* Optional: underline on hover */
+}
