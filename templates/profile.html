@@ -80,7 +80,13 @@
               <li><a href="{{ url_for('address') }}">Addresses</a></li>
               <li><a href="{{ url_for('wishlist') }}">Wishlist</a></li>
               <li><a href="{{ url_for('my_purchases') }}">My Purchases</a></li>
-              <li><a href="{{ url_for('my_purchases') }}">Become a Seller</a></li>
+              {% if userType == 'buyer' %}
+                <li><a href="{{ url_for('apply_seller') }}">Become a Seller</a></li>
+                {% endif %}
+
+                {% if userType == 'buyer/seller' %}
+                    <li><a href="{{ url_for('manage_store') }}">Manage your store</a></li>
+                {% endif %}
           </ul>
       </div>
       

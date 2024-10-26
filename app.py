@@ -381,9 +381,6 @@ def fetch_deals():
             'start_date': deal[8].strftime("%Y-%m-%d %H:%M:%S"),
             'end_date': formatted_end_date
         })
-
-        print("Deal with prices:", deals_with_prices[-1])  # Check the last added deal
-
     except Exception as e:
         print("Error retrieving deals:", e)  # Logging the error
         return render_template('error.html', message="Failed to retrieve deals.")  # Return an error message
@@ -799,6 +796,33 @@ def seller(seller_id):
     else:
         return "Seller information not found", 404
 
+@app.route('/manage_store')
+def manage_store():
+    # Check if the user is logged in
+    if 'logged_in' in session and session['logged_in']:
+        # Check if the userType is 'buyer/seller'
+        username = session.get('username')  # Get the username from the session
+
+        # Fetch user data from the database
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+
+        cursor.execute("SELECT userType FROM accountinformation WHERE username = %s", (username,))
+        user = cursor.fetchone()  # Get user data
+
+        userType = user.get('userType') if user else None
+
+        if userType == 'buyer/seller':
+            # Render the seller dashboard template
+            return render_template('seller_dashboard.html', user=user)
+        else:
+            # If not authorized, redirect to homepage or show an error message
+            flash("Access denied. You are not authorized to view this page.", "danger")
+            return redirect(url_for('homepage'))
+    else:
+        flash("Please log in to access this page.", "warning")
+        return redirect(url_for('login'))
+    
 @app.route('/product/<int:product_id>')
 def product(product_id):
     # Fetch product details from the database using product_id
@@ -819,7 +843,278 @@ def product(product_id):
         return "Product not found", 404
     else:
         return "Seller information not found", 404
+
+@app.route('/products_management', methods=['GET', 'POST'])
+def products_management():
+    if 'userID' in session:  # Check if the user is logged in
+        user_id = session['userID']  # Fetch the userID from the session
+        products = fetch_all_products(user_id)  # Fetch all products
+        categories = fetch_all_categories()  # Fetch all categories
+
+        selected_category_id = None
+        subcategories = []
+        selected_product = None
+
+        if request.method == 'POST':
+            selected_category_id = request.form.get('categoryID')
+            product_id = request.form.get('productID')
+            print("Category ID: ", selected_category_id)
+            print("Product ID: ", product_id)
+            if product_id:
+                selected_product = get_product_by_id(product_id)  # Fetch the specific product by its ID
+            if selected_category_id:
+                subcategories = fetch_subcategories_by_category(selected_category_id)  # Fetch subcategories based on selected category
+
+        return render_template('product_management.html', user_id=user_id, 
+                               products=products, 
+                               categories=categories, 
+                               selected_category_id=selected_category_id, 
+                               subcategories=subcategories,
+                               selected_product=selected_product)
+    else:
+        return redirect(url_for('login'))  # Redirect to login if not logged in
+
+@app.route('/add_or_update_product', methods=['POST'])
+def add_or_update_product():
+    username = session.get('username')
+
+    if not username:
+        flash('You must be logged in to add or update a product.', 'error')
+        return redirect(url_for('login'))
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    try:        
+        product_id = request.form.get('productID')
+        product_name = request.form.get('productName')
+        product_desc = request.form.get('productDesc')
+        seller_id = request.form.get('sellerID')
+        category_id = request.form.get('categoryID')
+        subcategory_id = request.form.get('subcategoryID')
+        product_price = float(request.form.get('productPrice'))
         
+        if not product_name or product_price <= 0:
+            flash('Invalid product name or price.', 'error')
+            return redirect(url_for('products_management'))
+        
+        # Process product images
+        product_images = request.files.getlist('productImages')
+        image_urls = []
+        for img in product_images:
+            if img:
+                filename = secure_filename(img.filename)
+                img.save(os.path.join('static/uploads', filename))  # Change to your upload folder
+                image_urls.append(filename)
+            
+        # Check if updating or adding a product
+        if product_id:  # Update existing product
+            cursor.execute("""
+                UPDATE products
+                SET productName = %s, productDesc = %s, sellerID = %s, 
+                    categoryID = %s, subcategoryID = %s, productPrice = %s, imgURL = %s
+                WHERE productID = %s
+            """, (product_name, product_desc, seller_id, category_id, subcategory_id, product_price, image_urls, product_id))
+        else:  # Add new product
+            cursor.execute("""
+                INSERT INTO products (productName, productDesc, sellerID, categoryID, 
+                    subcategoryID, imgURL, productPrice)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """, (product_name, product_desc, seller_id, category_id, subcategory_id, image_urls, product_price))
+
+            product_id = cursor.lastrowid  # Get the new product ID after insertion
+
+        if 'variation' in request.form:
+            handle_variations(cursor, request, product_id, product_price)  # Refactor variation handling to a separate function
+
+        # Commit the changes to the database
+        connection.commit()
+
+        flash('Product successfully added/updated!', 'success')
+        return redirect(url_for('products_management'))
+    except Exception as e:
+        connection.rollback()  # Rollback in case of an error
+        flash(f'An error occurred: {str(e)}', 'error')
+    finally:
+        cursor.close()
+        connection.close()
+
+    return redirect(url_for('products_management'))
+
+def handle_variations(cursor, request, product_id, product_price):
+    variations = request.form.getlist('variation')
+    for variation in variations:
+        if variation == 'Color':
+            color_options = request.form.getlist('colorSet')  # Assuming colorSet contains the color values
+            for color in color_options:
+                cursor.execute("""
+                    INSERT INTO product_variation_details (productID, variationID, optionID, stockQuantity, productPrice, discountRate) 
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                """, (product_id, variation, None, 0, product_price, 0))
+
+        elif variation == 'Storage':
+            storage_price = request.form.get('storagePrice')
+            storage_size = request.form.get('storageSelect')
+            cursor.execute("""
+                INSERT INTO product_variation_details (productID, variationID, optionID, stockQuantity, productPrice, discountRate) 
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, (product_id, variation, None, 0, storage_price, 0))
+
+        elif variation == 'RAM':
+            ram_price = request.form.get('ramPrice')
+            ram_size = request.form.get('ram')
+            cursor.execute("""
+                INSERT INTO product_variation_details (productID, variationID, optionID, stockQuantity, productPrice, discountRate) 
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, (product_id, variation, None, 0, ram_price, 0))
+
+# Route to add product
+@app.route('/add_product', methods=['POST'])
+def add_product():
+    product_name = request.form['productName']
+    product_desc = request.form['productDesc']
+    seller_id = request.form['sellerID']  # Assuming the seller ID is obtained from the current user session
+    category_id = request.form['categoryID']
+    product_price = request.form['productPrice']
+    variation = request.form['variation']
+
+    product_images = request.files.getlist('productImages')
+    image_filenames = []
+    
+    for product_image in product_images:
+        if product_image:
+            image_filename = secure_filename(product_image.filename)
+            product_image.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
+            image_filenames.append(image_filename)
+
+    # Save product to the database
+    save_product_to_db(product_name, product_desc, seller_id, category_id, product_price, image_filenames, variation)
+
+    return redirect(url_for('products_management'))
+
+def save_product_to_db(name, description, seller_id, category_id, price, image_filenames, variation):
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    try:
+
+        add_product_query = """
+                INSERT INTO products (productName, productDesc, sellerID, categoryID, productPrice, variation)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """
+        cursor.execute(add_product_query, (name, description, seller_id, category_id, price, variation))
+        
+        # Get the last inserted product ID
+        product_id = cursor.lastrowid
+        
+        # Insert product images into productImages table
+        add_image_query = """
+            INSERT INTO productImages (productID, imageURL)
+            VALUES (%s, %s)
+        """
+        for image_filename in image_filenames:
+            cursor.execute(add_image_query, (product_id, image_filename))
+        
+        # Commit the transaction
+        connection.commit()
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        connection.rollback()  # Rollback if there was an error
+    finally:
+        cursor.close()
+        connection.close()
+
+def get_product_images(product_id):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    
+    query = "SELECT imageURL FROM productImages WHERE productID = %s"
+    cursor.execute(query, (product_id,))
+    
+    images = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    
+    return [image[0] for image in images]  # Return list of image URLs
+
+# Route to edit product
+@app.route('/edit_product', methods=['POST'])
+def edit_product():
+    product_id = request.form['productID']
+    product_name = request.form['productName']
+    product_price = request.form['productPrice']
+    
+    # Handle file upload
+    if 'productImage' in request.files and request.files['productImage'].filename != '':
+        product_image = request.files['productImage']
+        image_filename = secure_filename(product_image.filename)
+        product_image.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
+        update_product_in_db(product_id, product_name, product_price, image_filename)
+    else:
+        update_product_in_db(product_id, product_name, product_price)
+
+    return redirect(url_for('products_management'))
+
+# Route to get product details for editing
+@app.route('/get_product/<int:product_id>', methods=['GET'])
+def get_product(product_id):
+    product = fetch_product_by_id(product_id)
+    return jsonify({
+        'productName': product.productName,
+        'productPrice': product.productPrice,
+    })
+
+def fetch_all_products(seller_id):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    # Adjust the query to fetch only products for the current seller
+    query = "SELECT productID, imgURL, productName, productPrice FROM products WHERE sellerID = %s"
+    cursor.execute(query, (seller_id,))
+    
+    products = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    
+    # Process the product data as needed
+    return [{'productID': product[0], 'imgURL': product[1], 'productName': product[2], 'productPrice': product[3]} for product in products]
+
+def fetch_all_categories():
+    conn = get_db_connection()  # Ensure your DB connection is established correctly
+    cursor = conn.cursor()
+    cursor.execute("SELECT categoryID, categoryName FROM categories")  # Adjust the query as needed
+    categories = cursor.fetchall()
+    
+    categories_list = [{'categoryID': category[0], 'categoryName': category[1]} for category in categories]
+
+    cursor.close()
+    conn.close()
+
+    return categories_list  # Return the list of dictionaries
+
+@app.route('/fetch_subcategories', methods=['POST'])
+def fetch_subcategories():
+    selected_category_id = request.form.get('categoryID')
+    if selected_category_id:
+        subcategories = fetch_subcategories_by_category(selected_category_id)  # Fetch subcategories based on selected category
+        return jsonify(subcategories=subcategories)  # Convert to JSON
+    return jsonify(subcategories=[])
+
+@app.route('/get_subcategories/<int:category_id>')
+def fetch_subcategories_by_category(category_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    print("Category ID: ", category_id)
+    cursor.execute("SELECT subcategoryID, subcategoryName FROM subcategories WHERE categoryID = %s", (category_id,))
+    subcategories = cursor.fetchall()
+    
+    subcategories_list = [{'subcategoryID': subcategory[0], 'subcategoryName': subcategory[1]} for subcategory in subcategories]
+    
+    cursor.close()
+    conn.close()
+    
+    return subcategories_list
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -856,7 +1151,8 @@ def login():
             session['userID'] = user['accountID']
             session['username'] = user['username']
             session['logged_in'] = True
-            
+            session['userType'] = user['userType']
+
             flash('Login successful!', 'success')
 
             # Redirect based on user type
@@ -1197,8 +1493,12 @@ def profile():
         user = cursor.fetchone()  # Get the user data
 
         address = None 
+        userType = None
 
         if user:
+
+            userType = user.get('userType')
+
             # Fetch the default address for the user
             cursor.execute("""
                 SELECT * FROM addresses 
@@ -1276,7 +1576,7 @@ def profile():
         no_address = address is None
 
         # Render the profile page with user data
-        return render_template('profile.html', user=user, address=address, no_address=no_address)
+        return render_template('profile.html', user=user, address=address, no_address=no_address, userType=userType)
     else:
         flash('Please log in to access your profile.', 'warning')  # Flash a message
         return redirect(url_for('login'))  # Redirect to the login page
