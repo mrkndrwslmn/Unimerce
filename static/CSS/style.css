@@ -139,17 +139,17 @@ body {
 }
 
 .search-btn {
-    background: var(--white);
-    color: var(--onyx);
-    font-size: 18px;
-    padding: 8px 15px;
-    border-radius: 10px;
-    transition: ease-in;
-    margin-left: 10px;
+  background-color: var(--primary-color);
+  color: var(--bluewhite);
+  font-size: 18px;
+  padding: 8px 15px;
+  border-radius: 10px;
+  transition: ease-in;
+  margin-left: 10px;
 }
 
 .search-btn:hover { 
-  color: var(--dark-green); 
+  color: var(--bluewhite); 
 }
 
 /* Mobile Bottom Navigation */
@@ -786,10 +786,8 @@ body {
   border-radius: 15px; /* Rounded corners */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow for the login form */
   width: 450px; /* Fixed width */
-  height: 550px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   text-align: center;
 }
 
@@ -820,7 +818,7 @@ body {
 .login-btn {
   width: 100%;
   padding: 12px;
-  margin-top: 20%;
+  margin-top: 10%;
   background-color: var(--light-green);
   color: var(--bluewhite);
   font-size: 1rem;
@@ -1565,6 +1563,7 @@ body {
   margin: 0 auto; /* Center the container */
   display: flex;
   flex-direction: column; /* Stack child elements vertically */
+  justify-content: space-between;
 }
 
 .products-container h2 {
@@ -1574,9 +1573,8 @@ body {
 
 .product-items {
   display: flex; /* Use flexbox for product items */
-  justify-content: flex-start; /* Align items to the left */
   flex-wrap: wrap; /* Allow wrapping for multiple items */
-  text-decoration: none;
+  text-decoration: none;  
 }
 
 .product-p1 {
@@ -1592,7 +1590,13 @@ body {
   margin: 10px; /* Space between product containers */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
   text-decoration: none;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
   overflow: hidden; /* Hide overflow content */
+}
+
+.product-p1:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transform: scale(1.01);
 }
 
 .image-container {
@@ -1614,15 +1618,13 @@ body {
 /* Position discount rate in the top left corner */
 .discount-rate1 {
   text-decoration: none;
-  font-size: 1rem; /* Size for the discount rate */
-  color: var(--bluewhite); /* Color for discount rate */
-  position: absolute; /* Position absolutely within the product card */
-  background-color: rgba(0, 100, 0, 0.7); /* Dark green with transparency */
+  font-size: 0.8rem; /* Size for the discount rate */
+  color: var(--dark-green); /* Color for discount rate */
+  background-color: var(--bluewhite); /* Dark green with transparency */
   backdrop-filter: blur(5px); /* Apply a blur effect to the background */
   padding: 5px 10px; /* Padding around the text */
   border-radius: 5px; /* Rounded corners */
-  top: 10px; /* Distance from the top */
-  left: 10px; /* Distance from the left */
+  margin-left: 5px;
 }
 
 .discount-info {
@@ -1635,7 +1637,7 @@ body {
 .original-price1 {
   text-decoration: line-through; /* Strike-through for original price */
   color: var(--grey); /* Color for original price */
-  font-size: 0.8rem; /* Size for original price */
+  font-size: 0.5rem; /* Size for original price */
   margin-left: 10px;
   text-decoration: none;
 }
@@ -1710,102 +1712,145 @@ body {
 
 /* //........ deal of week ........// */
 #deals-of-week {
-  margin: 20px auto; /* Center the section horizontally */
-  margin-bottom: 5rem;
-  width: 80%; /* Set the width to 80% of the container */
+  margin: 0 auto; /* Center the section horizontally */
+  margin-bottom: 3rem;
+  width: 80%; /* Limit the maximum width */
+  padding: 10px; /* Add internal padding */
 }
 
 .promotions-wrapper {
   display: flex;
-  flex-direction: column;
-  gap: 20px; /* Space between promotion items */
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.promotions-wrapper a {
+  display: block; /* Makes the anchor behave like a block element */
+  text-decoration: none !important; /* Remove default link underline */
+  color: inherit !important; /* Inherit color for any text */
 }
 
 .promotion-item {
+  flex-direction: column;
   position: relative; /* Required for absolutely positioning the discount rate */
   display: flex;
+  position: relative;
   align-items: flex-start;
+  width: 350px;
+  height: 600px;
   border: 1px solid #ccc; /* Add border for better visual */
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease; /* Smooth shadow transition */
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .promotion-item:hover {
+  transform: scale(1.01);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
 }
 
 .product-image {
-  width: 30%; /* Image occupies 40% of the container */
+  width: 100%; /* Image occupies 40% of the container */
+  min-height: 300px;
   border-radius: 8px;
   object-fit: cover; /* Ensure the image covers the area */
+  margin-bottom: 15px;
 }
 
 .promotion-info {
-  width: 60%; /* Info occupies the remaining 60% */
-  padding-left: 35px; /* Space between image and info */
   display: flex;
   flex-direction: column; /* Align children in a column */
   height: 100%;
+  width: 100%;
+  justify-content: space-between;
 }
 
 .discount-rate {
   position: absolute; /* Position it over the image */
-  top: 10px; /* Adjust the top position */
-  left: 15px; /* Adjust the left position */
-  background-color: #e74c3c; /* Red background */
-  color: white; /* White text */
+  top: 25px; /* Adjust the top position */
+  left: 25px; /* Adjust the left position */
+  background-color: var(--bluewhite); /* Red background */
+  backdrop-filter: blur(25px);
+  color: var(--dark-green); /* White text */
   padding: 5px 10px; /* Padding for shape */
   border-radius: 5px; /* Rounded corners */
   z-index: 10; /* Make sure it appears above other elements */
 }
 
 .product-name {
+  max-height: 1em; /* Limit height to 3 lines */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
   font-weight: bold; /* Bold product name */
-  font-size: 3em; /* Slightly larger font size for emphasis */
-  margin-bottom: 15px; /* Space below product name */
-}
-
-.product-description {
-  margin-bottom: 15px; /* Space below product description */
-  color: #666; /* Lighter color for description */
+  font-size: 1.5em; /* Slightly larger font size for emphasis */
 }
 
 .price-container {
   display: flex;
   align-items: center; /* Align items in the center */
-  margin-bottom: 15px; /* Space below price */
-  flex-grow: 1;
+  gap: 10px;
+  margin-top: auto; /* Push prices to the bottom of the container */
 }
 
 .discounted-price {
-  font-size: 2.5em; /* Larger font for discounted price */
-  color: #e74c3c; /* Highlight discounted price in red */
-  margin-right: 10px; /* Space between prices */
+  font-size: 2em; /* Larger font for discounted price */
+  font-weight: bold;
+  color: var(--light-green); /* Highlight discounted price in red */
 }
 
 .original-price {
-  color: #e74c3c; /* Lighter color for original price */
-  font-size: 2.5em; /* Slightly larger font size for visibility */
+  color: var(--light-green); /* Lighter color for original price */
+  font-size: 2em; /* Slightly larger font size for visibility */
 }
 
 .original-price.with-discount {
   text-decoration: line-through; /* Striked-through original price */
   color: #999; /* Lighter color for original price */
-  font-size: 1.5em; /* Slightly larger font size for visibility */
+  font-size: 1em; /* Slightly larger font size for visibility */
 }
 
+.deals-btn-container {
+  display: flex; 
+  justify-content: space-between; /* Align buttons with space in between */
+  width: 100%; /* Ensure it takes full width */
+  margin-top: auto; /* Push the buttons to the bottom of the container */
+  margin-bottom: 10px;
+  gap: 10px; /* Space between buttons */
+}
+
+.add-to-wishlist .add-to-wishlist i {
+  color: var(--dark-green); /* White text */
+  border: none; /* Remove default border */
+  padding: 10px 15px; /* Button padding */
+  border-radius: 15px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.add-to-wishlist:hover {
+  background-color: var(--dark-green); /* Darker green on hover */
+  color: var(--bluewhite);
+}
+
+.add-to-wishlist i:hover {
+  color: var(--white);
+}
 .add-to-cart {
+  flex: 3; /* Make Add to Cart button larger */
   background-color: var(--light-green);
   color: white; /* White text */
   border: none; /* Remove default border */
   padding: 10px 15px; /* Button padding */
   border-radius: 5px; /* Rounded corners */
   cursor: pointer; /* Pointer cursor on hover */
-  margin-bottom: 10px; /* Space below button */
   transition: background-color 0.3s ease; /* Smooth transition */
 }
+
 
 .add-to-cart:hover {
   background-color: var(--dark-green); /* Darker green on hover */
@@ -1814,11 +1859,11 @@ body {
 .timer {
   display: flex;
   gap: 10px; /* Space between time items */
-  margin-top: auto;
 }
 
 .time-item {
   text-align: center; /* Center align text */
+  font-size: 0.8em;
   background: #f7f7f7; /* Light background for timer */
   padding: 10px; /* Padding around timer items */
   border-radius: 5px; /* Rounded corners */
@@ -1828,7 +1873,7 @@ body {
 
 .time-item span {
   font-weight: bold; /* Bold font for time numbers */
-  font-size: 1.2em; /* Larger font size for visibility */
+  font-size: 1em; /* Larger font size for visibility */
 }
 
 /* //........ Footer ...... // */
@@ -2162,9 +2207,28 @@ footer {
      */
   
     .header-top {
-      display: block;
+      display: flex;
       border-bottom: 1px solid #ccc; /* Light grey solid line */
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
     }
+
+    .left-contain {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0;
+    }
+
+    .user-profile-image-container img {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      margin-right: 10px;
+  }
+  
   
     .header-social-container,
     .header-top-actions { display: none; }
@@ -2174,7 +2238,20 @@ footer {
       font-size: var(--fs-9);
       text-transform: uppercase;
     }
-  
+
+    .header-top a {
+      text-decoration: none;
+      color: var(--dark-green);
+      margin: 0 10px;
+      margin-top: 15px;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .header-top a:hover {
+      color: var(--light-green);
+      text-decoration: underline;
+    }
     .header-alert-news b { font-weight: bold; }
     
     .header-alert-news p { margin-top: 10px; }
@@ -3027,3 +3104,331 @@ footer {
     }
   
   }
+
+
+  /** SELLER APPLICATION STYLE */
+
+.seller-registraition-container {
+  width: 80%;
+  margin: auto;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.progress-container {
+  display: flex;
+  width: 50%;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 60px;
+  border-bottom: 0 2px 10px solid rgba(0, 0, 0, 0.1);
+}
+
+.prog-main-cont {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  margin-bottom: 15px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.circle {
+  display: flex; /* Use flexbox */
+    flex-direction: column; /* Stack items vertically */
+    align-items: center; /* Center align items */
+    justify-content: center; /* Center align vertically */
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #ddd;
+    transition: background-color 0.3s ease;
+    position: relative;
+}
+
+.circle.done {
+  background-color: #28a745; /* Green */
+}
+
+.circle.active {
+  background-color: #ffc107; /* Yellow */
+}
+
+.label {
+  color: white;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.title {
+  text-align: center;
+  font-size: 0.8rem;
+  margin-top: 10px;
+  position: absolute;
+  bottom: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Progress Bar */
+.bar {
+  height: 5px;
+  background-color: #ddd;
+  flex-grow: 1;
+  margin: 0 10px;
+  position: relative;
+}
+
+.bar.done {
+  background-color: #28a745; /* Green */
+}
+
+.bar.half {
+  background-color: #ffc107; /* Yellow */
+}
+
+/* Form Styles */
+.form-step {
+  display: block; /* Initially hide all form steps */
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-control, 
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+textarea {
+  height: 100px;
+}
+
+/* Button Styles */
+.form-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:disabled {
+  background-color: #ccc; /* Grey for disabled */
+  cursor: not-allowed;
+}
+
+
+/*-----------------------------------*\
+  #SHOPPING CART
+\*-----------------------------------*/
+
+
+.cart-container {
+  width: 80%;
+  margin: 50px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.cart-container h1 {
+  text-align: left;
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.cart-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.cart-table thead th {
+  background-color: #f1f1f1;
+  padding: 15px;
+  text-align: left;
+  border-bottom: 2px solid #ccc;
+}
+
+.cart-table tbody td {
+  padding: 15px;  
+  border-bottom: 1px solid #ddd;
+  vertical-align: middle;
+}
+
+.product-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+  min-height: 100px;
+  padding: 10px 0;
+}
+
+.product-info img,
+.product-info .product-image {  /* Added specific class selector */
+    flex: 0 0 100px;
+    width: 100px;
+    height: 100px;
+    min-height: 100px;
+    max-height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.product-info img {
+  flex: 0 0 100px;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.product-info span {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Quantity input group container */
+.quantity-input-group {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+  width: fit-content;
+  background: white;
+}
+
+/* Quantity buttons */
+.quantity-btn {
+  border: none;
+  background: #f8f9fa;
+  color: #333;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.quantity-btn:hover {
+  background: #e9ecef;
+}
+
+.quantity-btn:active {
+  background: #dee2e6;
+}
+
+/* Disable button styles */
+.quantity-btn:disabled {
+  background: #e9ecef;
+  color: #adb5bd;
+  cursor: not-allowed;
+}
+
+/* Quantity input */
+.quantity-input {
+  width: 50px;
+  height: 32px;
+  border: none;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  text-align: center;
+  font-size: 14px;
+  padding: 0 8px;
+  -moz-appearance: textfield; /* Firefox */
+}
+
+/* Remove spinner arrows */
+.quantity-input::-webkit-outer-spin-button,
+.quantity-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--bluewhite);
+}
+
+.btn-danger {
+  background-color: #e74c3c;
+}
+
+.btn-danger:hover {
+  background-color: #c0392b;
+}
+
+.btn-success {
+  border-radius: 5px;
+  padding: 15px;
+  background-color: var(--primary-color);
+  color: var(--white);
+  text-decoration: none;
+}
+
+.btn-success:hover {
+  background-color: var(--light-green);
+}
+
+.btn-primary {
+  border-radius: 5px;
+  padding: 15px;
+  background-color: var(--primary-color);
+  color: var(--white);
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  background-color: var(--light-green);
+}
+
+
+.cart-summary {
+  text-align: right;
+  margin-top: 20px;
+}
+
+.cart-summary h2 {
+  margin-bottom: 10px;
+}
+
+#total-price {
+  font-weight: bold;
+  color: #333;
+}

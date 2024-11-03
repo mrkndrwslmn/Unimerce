@@ -76,62 +76,67 @@
     <div class="container user-profile-container mt-5">
         <div class="sidebar user-profile-sidebar">
             <ul class="nav user-profile-nav">
-                <li><a href="{{ url_for('profile') }}">Profile</a></li>
-                <li><a href="{{ url_for('address') }}" class="active">Addresses</a></li>
-                <li><a href="{{ url_for('wishlist') }}">Wishlist</a></li>
-                <li><a href="{{ url_for('my_purchases') }}">My Purchases</a></li>
-                <li><a href="{{ url_for('address') }}">Become a Seller</a></li>
+                <li><a href="{{ url_for('user.profile') }}">Profile</a></li>
+                <li><a href="{{ url_for('address.address') }}" class="active">Addresses</a></li>
+                <li><a href="{{ url_for('product.wishlist') }}">Wishlist</a></li>
+                <li><a href="{{ url_for('product.wishlist') }}">My Purchases</a></li>
+                <li><a href="{{ url_for('seller.seller_application') }}">Become a Seller</a></li>
             </ul>
         </div>
 
         <div class="user-profile-content">
-            <h1>Address</h1>
+            <div class="add-address-form">
+                <form action="{{ url_for('address.show_address_form') }}" method="GET" style="margin-top: 20px;">
+                    <button type="submit" class="btn-primary">+ Add New Address</button>
+                </form>
+            </div>
+
+            <h1>Manage Address</h1>
+            
             {% if addresses %}
                 {% for address in addresses %}
-                    <div class="address-container" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 10px;">
-                        <h4 {% if address.isdefault %}style="font-weight: bold;"{% endif %}>Address:</h4>
-                        <p><strong>Address Line 1:</strong> {{ address[1] }}</p>
-                        {% if address.addressLine2 %}
-                            <p><strong>Address Line 2:</strong> {{ address[2] }}</p>
-                        {% endif %}
-                        <p><strong>City:</strong> {{ address[3] }}</p>
-                        <p><strong>State:</strong> {{ address[4] }}</p>
-                        <p><strong>Postal Code:</strong> {{ address[5] }}</p>
-                        <p><strong>Country:</strong> {{ address[6] }}</p>
+                <div class="address-container">
+                    <div class="address-details">
+                        <h4>
+                            {% if address['isDefault'] == 1 %}
+                                Default Address
+                            {% else %}
+                                Address
+                            {% endif %}
+                        </h4>
+                    </div>
+                    
+                        <r>{{ address['addressLine1'] }}, {% if address['addressLine2'] %}, {% endif %} </br></r>
+                        <r>{{ address['city'] }}, {{ address['state'] }}, {{ address['zipCode'] }}, {{ address['country'] }}</r>                        
 
                         <div class="address-actions" style="margin-top: 10px;">
-                            {% if not address[7] %}
-                            <form action="{{ url_for('set_default_address') }}" method="POST" style="display: inline;">
-                                <input type="hidden" name="addressID" value="{{ address[0] }}">
-                                <button type="submit" class="btn btn-primary" 
-    {% if address.isdefault %}disabled onclick="return false;"{% else %}onclick="return confirm('Are you sure you want to set this address as default?');"{% endif %}>
-    Set as Default
-</button>                 
+                            {% if address['isDefault'] == 0 %}
+                            <form action="{{ url_for('address.set_default_address') }}" method="POST" style="display: inline;">
+                                <input type="hidden" name="addressID" value="{{ address['addressID'] }}">
+                                <button type="submit" class="btn-primary"
+                                    onclick="return confirm('Are you sure you want to set this address as default?');">
+                                    Set as Default
+                                </button>
                             </form>
                             {% endif %}
-                            <form action="{{ url_for('show_address_form') }}" method="GET" style="display: inline;">
-                                <input type="hidden" name="addressID" value="{{ address[0] }}">
-                                <button type="submit" class="btn btn-secondary">Edit</button>
-                            </form>                            
 
-                            <form action="{{ url_for('delete_address') }}" method="POST" style="display: inline;">
-                                <input type="hidden" name="addressID" value="{{ address[0] }}">
-                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this address?')">Delete</button>
+                            <form action="{{ url_for('address.show_address_form') }}" method="GET" style="display: inline;">
+                                <input type="hidden" name="addressID" value="{{ address['addressID'] }}">
+                                <button type="submit" class="btn-secondary"><i class="fa-duotone fa-solid fa-pen-to-square"></i></button>
+                            </form>                          
+
+                            <form action="{{ url_for('address.delete_address') }}" method="POST" style="display: inline;">
+                                <input type="hidden" name="addressID" value="{{ address['addressID'] }}">
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this address?')"><i class="fa-sharp fa-solid fa-trash"></i></button>
                             </form>
                         </div>                        
                     </div>
                 {% endfor %}
             {% else %}
                 <p>No addresses found. Please add a new address.</p>
-            {% endif %}
-
-            <div class="add-address-form">
-            <form action="{{ url_for('show_address_form') }}" method="GET" style="margin-top: 20px;">
-                <button type="submit" class="btn btn-success">Add Address</button>
-            </form>
+            {% endif %}            
+            </div>
         </div>
-        </div>
-    </div>       
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

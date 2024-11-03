@@ -46,10 +46,12 @@
         </div>
         
         <div class="header-main">
+    
             <div class="container">
                 <a href="{{ url_for('homepage') }}" class="header-logo">
                     <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
                 </a>
+            
                 <div class="header-flex">
                     <div class="header-controls">
                         <select id="categoryDropdown">
@@ -59,6 +61,7 @@
                             {% endfor %}
                         </select>
                     </div>
+              
                     <div class="header-search-container">
                         <input type="search" name="search" class="search-field" placeholder="Search your favorite products">
                         <button type="button" class="search-btn">Search</button>
@@ -73,35 +76,39 @@
         </div> 
     </header>
       
-    <div class="container user-profile-container">
-      <div class="sidebar user-profile-sidebar">
-          <ul class="nav user-profile-nav">
-              <li><a href="{{ url_for('profile') }}" class="active">Profile</a></li>
-              <li><a href="{{ url_for('address') }}">Addresses</a></li>
-              <li><a href="{{ url_for('wishlist') }}">Wishlist</a></li>
-              <li><a href="{{ url_for('my_purchases') }}">My Purchases</a></li>
+    <div class="user-profile-container">
+      <div class="user-profile-sidebar">
+          <ul class="user-profile-nav">
+              <li><a href="{{ url_for('user.profile') }}" class="active">Profile</a></li>
+              <li><a href="{{ url_for('address.address') }}">Addresses</a></li>
+              <li><a href="{{ url_for('product.wishlist') }}">Wishlist</a></li>
+              <li><a href="{{ url_for('product.wishlist') }}">My Purchases</a></li>
               {% if userType == 'buyer' %}
-                <li><a href="{{ url_for('apply_seller') }}">Become a Seller</a></li>
+                <li><a href="{{ url_for('seller.seller_application') }}">Become a Seller</a></li>
                 {% endif %}
 
-                {% if userType == 'buyer/seller' %}
-                    <li><a href="{{ url_for('manage_store') }}">Manage your store</a></li>
+                {% if user.userType == 'buyer/seller' %}
+                    <li><a href="{{ url_for('seller.manage_store') }}">Manage your store</a></li>
                 {% endif %}
           </ul>
       </div>
       
       <div class="user-profile-content">
           <h2>My Profile</h2>
-          <form method="POST" action="{{ url_for('profile') }}" enctype="multipart/form-data" style="display: inline;">
+          <form method="POST" action="{{ url_for('user.profile') }}" enctype="multipart/form-data" style="display: inline;">
             
             <div class="user-profile-image-container">
-              <img src="{{ user.profilePic if user.profilePic else 'static/default_profile.jpg' }}" alt="Profile Image" id="profile-img">
-              
+                <img 
+                src="{{ url_for('static', filename=user.profilePic.replace('static/', '')) if user.profilePic else url_for('static', filename='default_profile.jpg') }}" 
+                alt="Profile Image" 
+                id="profile-img"
+                onerror="this.onerror=null;this.src='{{ url_for('static', filename='default_profile.jpg') }}';">
+
                   <input type="file" name="profile_image" id="file-input" accept="image/*" onchange="previewImage(event)" style="display: none;">
-                  <label1 for="file-input" class="custom-file-upload">
+                  <label1 id="custom-label" for="file-input" class="custom-file-upload">
                     Select Image
                 </label1>
-          </div>
+            </div>
 
           <div class="form-group-container">
               <div class="form-group user-profile-form-group">
@@ -143,7 +150,7 @@
               <p>Username cannot be changed. To save changes, press Save Changes. Else, your edits won't be saved.</p>  
                   <button type="submit" class="user-profile-save-btn">Save Changes</button>
             </form>
-                  <form method="POST" action="{{ url_for('logout') }}" style="display: inline;">
+                  <form method="POST" action="{{ url_for('user.logout') }}" style="display: inline;">
                   <button type="submit" class="logout-btn">Logout</button>
                 </form>            
             </div>
@@ -151,25 +158,29 @@
       </div>
   </div>  
       <script>
-        // JavaScript to toggle the image input container
-        document.getElementById('edit-button').onclick = function() {
-            var inputContainer = document.getElementById('image-input-container');
-            // Toggle the display style between 'none' and 'block'
-            if (inputContainer.style.display === 'none') {
-                inputContainer.style.display = 'block'; // Show input
-            } else {
-                inputContainer.style.display = 'none'; // Hide input
+        document.addEventListener('DOMContentLoaded', () => {
+            // Function to preview the selected image
+            function previewImage(event) {
+                const img = document.getElementById('profile-img');
+                img.src = URL.createObjectURL(event.target.files[0]);
+                img.onload = () => {
+                    URL.revokeObjectURL(img.src); // Free memory after loading
+                };
             }
-        };
 
-        // Function to preview the selected image
-        function previewImage(event) {
-            var img = document.getElementById('profile-img');
-            img.src = URL.createObjectURL(event.target.files[0]);
-            img.onload = () => {
-              URL.revokeObjectURL(img.src); // Show the image once it's selected
-        }
-      }
+            // Ensure the label1 triggers the file input correctly
+            const label = document.getElementById('custom-label');
+            const fileInput = document.getElementById('file-input');
+
+            // Bind a click event to the custom label to open the file input
+            label.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            // Bind event listener to the file input for previewing the image
+            fileInput.addEventListener('change', previewImage);
+        });
+
       </script>          
 </body>
 </html>

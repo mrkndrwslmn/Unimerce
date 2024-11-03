@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-=======
-
 document.querySelectorAll('.accordion-menu').forEach(button => {
     button.addEventListener('click', () => {
         const submenu = button.nextElementSibling; // Select the submenu directly following the button
@@ -142,10 +139,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
   promotions.forEach(promotion => {
       // Get the end date from the data attribute
-      const endDateString = promotion.dataset.endDate; // Fetch the end date from the data attribute
-      const endDate = new Date(endDateString); // Parse the end date correctly
+      const endDateString = promotion.dataset.endDate.trim();
 
-      console.log('End Date Object:', endDate); // Log the end date object for debugging
+      const [year, month, day] = endDateString.split('-').map(num => parseInt(num, 10));
+      const endDate = new Date(year, month - 1, day, 23, 59, 59); // Month is 0-indexed
 
       // Start the countdown
       const timer = promotion.querySelector('.timer');
@@ -157,26 +154,26 @@ document.addEventListener('DOMContentLoaded', function () {
       const countdown = setInterval(() => {
           const now = new Date();
           const distance = endDate - now;
-
-          // Calculate time components
-          const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-          const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-          const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-          const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-          // Display results
-          daysElem.textContent = days < 10 ? '0' + days : days;
-          hoursElem.textContent = hours < 10 ? '0' + hours : hours;
-          minutesElem.textContent = minutes < 10 ? '0' + minutes : minutes;
-          secondsElem.textContent = seconds < 10 ? '0' + seconds : seconds;
-
-          // If the countdown is over, write some text
+          
           if (distance < 0) {
-              clearInterval(countdown);
-              timer.innerHTML = "Promotion Ended"; // End message
-          }
-      }, 1000); // Update every second
-  });
+            clearInterval(countdown);
+            timer.innerHTML = "Promotion Ended"; // End message
+            return;
+        }
+
+        // Calculate time components
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        // Display results
+        daysElem.textContent = days < 10 ? '0' + days : days;
+        hoursElem.textContent = hours < 10 ? '0' + hours : hours;
+        minutesElem.textContent = minutes < 10 ? '0' + minutes : minutes;
+        secondsElem.textContent = seconds < 10 ? '0' + seconds : seconds;
+    }, 1000); // Update every second
+});
 });
 
 // Wait for the DOM to fully load
@@ -223,4 +220,52 @@ document.addEventListener("DOMContentLoaded", function() {
     }, 25000); // 25 seconds
   }
 });
->>>>>>> 81bccb2 (seller_dashboard edited)
+
+/* SELLER APPLICATION */
+let currentStep = 0; // Current step index
+const steps = document.querySelectorAll('.form-step'); // Get all form steps
+
+function showStep(step) {
+    // Hide all steps
+    steps.forEach((el, index) => {
+        el.style.display = index === step ? 'block' : 'none';
+    });
+
+    // Update progress circles
+    const circles = document.querySelectorAll('.circle');
+    circles.forEach((circle, index) => {
+        if (index < step) {
+            circle.classList.add('done');
+        } else if (index === step) {
+            circle.classList.add('active');
+        } else {
+            circle.classList.remove('done', 'active');
+        }
+    });
+
+    // Enable/disable previous button
+    document.getElementById('prevBtn').disabled = step === 0;
+    // Show/hide submit step button
+    document.getElementById('nextBtn').style.display = step === steps.length - 1 ? 'none' : 'inline-block';
+}
+
+// Handle next and previous button clicks
+function nextPrev(n) {
+    // Hide current step
+    steps[currentStep].style.display = 'none';
+    // Move to the next step
+    currentStep += n;
+    // If you have reached the last step, do not go further
+    if (currentStep >= steps.length) {
+        currentStep = steps.length - 1;
+    }
+    // If you have reached the first step, do not go back
+    if (currentStep < 0) {
+        currentStep = 0;
+    }
+    // Show the current step
+    showStep(currentStep);
+}
+
+// Show the first step initially
+showStep(currentStep);

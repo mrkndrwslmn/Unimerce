@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homepage</title>
+    <title>Login</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='ic/logo.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -21,7 +21,7 @@
     <header>
         <div class="header-main">
             <div class="container">
-                <a href="#" class="header-logo">
+                <a href="{{url_for('homepage')}}" class="header-logo">
                     <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Banner 1">
                 </a>
 
@@ -45,16 +45,13 @@
             <div class="right-container" id="right-container">
                 <div class="login-container">
                     <p>LOGIN</p>
-                    <form action="{{ url_for('login') }}" method="POST">
+                    <form action="{{ url_for('user.login') }}" method="POST">
                     <input type="text" name="username" class="username-field" placeholder="Enter your email / username" required>
                     <input type="password" name="password" class="password" placeholder="Enter your password" required>
                     <c>Forgot your password?</c>
                     <button type="submit" class="login-btn">Login</button>
-                    <r>Don't have an account? <a href="{{ url_for('register') }}"><span>Sign up.</span></a></r>
+                    <r>Don't have an account? <a href="{{ url_for('user.register') }}"><span>Sign up.</span></a></r>
                 </form>
-                    {% if error %}
-                        <p style="color:red;">{{ error }}</p>
-                    {% endif %}
                 </div>
             </div>
         </div>
@@ -154,6 +151,32 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function() {
+            const flashMessages = {{ get_flashed_messages(with_categories=true) | tojson }}; 
+            flashMessages.forEach(function(message) {
+            Swal.fire({
+                icon: message[0], 
+                title: message[1], 
+            });
+            });
+
+            {% if error %}
+            Swal.fire({
+                title: "Error",
+                text: "{{ error }}",
+                icon: "error",
+                confirmButtonText: "OK"
+            });
+            {% endif %}
+        });
+    </script>
+
+
+
 </body>
 
 </html>

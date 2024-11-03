@@ -5,14 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UNIMERCE</title>
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='logoicon.ico') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="https://atugatran.github.io/FontAwesome6Pro/css/all.min.css" >
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet">
     <link rel='stylesheet' href='https://unpkg.com/boxicons@latest/css/boxicons.min.css' />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
@@ -25,61 +28,47 @@
         <div class="header-top">
     
           <div class="container">
-    
-            <ul class="header-social-container">
-    
-              <li>
-                <a href="facebook.com" class="social-link">
-                  <i class="fab fa-facebook"></i>
-                </a>
-              </li>
-    
-              <li>
-                <a href="x.com" class="social-link">
-                  <i class="fab fa-x-twitter"></i>
-                </a>
-              </li>
-    
-              <li>
-                <a href="instagram.com" class="social-link">
-                  <i class="fab fa-instagram"></i>
-                </a>
-              </li>
-    
-            </ul>
-    
-            <div class="header-alert-news">
-              <p>
-                <b>Free Shipping</b>
-                This Week for Orders Over - $55
-              </p>
-            </div>
-    
-            <div class="header-top-actions">
-    
-              <select name="currency">
-    
-                <option value="usd">USD &dollar;</option>
-                <option value="eur">EUR &euro;</option>
-    
-              </select>
-    
-              <select name="language">
-    
-                <option value="en-US">English</option>
-                <option value="es-ES">Espa&ntilde;ol</option>
-                <option value="fr">Fran&ccedil;ais</option>
-    
-              </select>
-    
+            <div class="left-contain">
+            <a href="{{ url_for('seller.manage_store') }}" class="seller-centre">
+              <p>Seller Centre</p>
+            </a>
+
+            <a href="{{ url_for('seller.seller_application') if user.userType=='buyer' else url_for('seller.manage_store') }}" class="apply-seller">
+              <p>Sell on UNIMERCE</p>
+            </a>
+
+            <a href="{{url_for('homepage')}}" class="apply-seller">
+              <p>Blogs</p>
+            </a>
+
+          </div>
+
+            {% if user %}
+            <!-- Show profile picture if user is logged in -->
+            <a href="{{ url_for('user.profile') }}">
+                <div class="user-profile-image-container">
+                    <img 
+                    src="{{ url_for('static', filename=user.profilePic.replace('static/', '')) if user.profilePic else url_for('static', filename='default_profile.jpg') }}" 
+                alt="Profile Image" 
+                id="profile-img">
+                {{ user.firstName }}
+                </div>
+            </a>
+            {% else %}
+                <!-- Show LOGIN and REGISTER links if user is not logged in -->
+                <div class="auth-links">
+                    <a href="{{ url_for('user.login') }}">LOGIN</a>
+                    <a href="{{ url_for('user.register') }}">REGISTER</a>
+                </div>
+            {% endif %}      
+        
             </div>
     
           </div>
     
         </div>
     
-        <div class="header-main">
-    
+        <div class="header-main">    
           <div class="container">
     
             <a href="{{url_for('homepage')}}" class="header-logo">
@@ -88,7 +77,7 @@
             
             <div class="header-flex">
               <div class="header-controls">
-                  <select id="categoryDropdown">
+                  <select id="categoryDropdown" class="form-select">
                       <option value="">All</option>
                       {% for category in categories %}
                           <option value="{{ category }}">{{ category.name }}</option>
@@ -97,27 +86,26 @@
               </div>
               
               <div class="header-search-container">
-                  <input type="search" name="search" class="search-field" placeholder="Search your favorite products">
-                  <button type="button" class="search-btn">Search</button>
+                  <input type="search" id="searchInput" name="search" class="search-field" placeholder="Search your favorite products">
+                  <button type="button" class="search-btn" onclick="performSearch()">Search</button>
               </div>
-          </div>
-          
+            </div>
     
-            <div class="header-user-actions">
-              <button class="action-btn" onclick="window.location.href='{{ url_for('profile') }}'">
-                <i class="fa-solid fa-user"></i>
-              </button>
-    
+            
+            <div class="header-user-actions">             
+              
+              <a class="action-btn" href="{{ url_for('product.shoppingcart') }}">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span class="count">0</span>
+              </a>
+
               <button class="action-btn">
-                <i class="fa-solid fa-heart"></i>
+                <i class="fa-sharp fa fa-bell"></i>
                 <span class="count">0</span>
               </button>
-    
-              <button class="action-btn">
-                <i class="fa-sharp fa-solid fa-bag-shopping"></i>
-                <span class="count">0</span>
-              </button>
-    
+
+              
+            </div>
             </div>
     
           </div>
@@ -130,44 +118,28 @@
     
 
     <div class="slideshow-container">
-        <!-- Slideshow images -->  
+      {% for campaign in campaigns %}
         <div class="slide fade">
-          <img src="{{ url_for('static', filename='images/banner.png') }}" alt="Banner 1">
-      </div>
-
-        <div class="slide fade">
-            <img src="{{ url_for('static', filename='images/banner1.png') }}" alt="Banner 2">
-        </div>
-      
-        <div class="slide fade">
-            <img src="{{ url_for('static', filename='images/banner2.png') }}" alt="Banner 3">
-        </div>
-      
-        <div class="slide fade">
-            <img src="{{ url_for('static', filename='images/banner3.png') }}" alt="Banner 4">
-        </div>
-      
-        <div class="slide fade">
-            <img src="{{ url_for('static', filename='images/banner4.png') }}" alt="Banner 5">
-        </div>
-      
-        <div class="slide fade">
-            <img src="{{ url_for('static', filename='images/banner5.png') }}" alt="Banner 6">
-        </div>
+          <a href="{% if campaign.linkType == 'product' %}
+                      {{ url_for('product.product_detail', product_id=campaign.linkID) }}
+                    {% else %}
+                      {{ url_for('seller.seller', seller_id=campaign.linkID) }}
+                    {% endif %}">
+                    <img src="{{ campaign.imageURL }}" alt="{{ campaign.campaignDescription }}">
+                  </a>
+                </div>
+              {% endfor %}    
         
         <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
         <a class="next" onclick="plusSlides(1)">&#10095;</a>        
 
         <!-- Circle indicators -->
         <div class="dots-container">
+          {% for campaign in campaigns %}
           <span class="dot"></span>
-          <span class="dot"></span>
-          <span class="dot"></span>
-          <span class="dot"></span>
-          <span class="dot"></span>
-          <span class="dot"></span>
+          {% endfor %}          
         </div>
-      </div>
+    </div>
 
         <section id="collection">
             <div class="collections-wrapper">
@@ -195,13 +167,10 @@
               <h2>Top Sales</h2>
               <div class="product-items"> 
                   {% for product in top_sales %}
-                  <a href="{{ url_for('product', product_id=product.productID) }}">
-                      <div class="product-p1">                        
+                  <a href="{{ url_for('product.product_detail', product_id=product.productID) }}">
+                      <div class="product-p1" style="justify-content: space-between;">                        
                           <div class="image-container">
-                              <img src="{{ product.imgURL }}" alt="{{ product.productName }}">
-                              {% if product.discount_rate and (product.campaign_start <= current_date <= product.campaign_end) %}
-                                  <span class="discount-rate1">{{ product.discount_rate }}% Off</span>
-                              {% endif %}
+                              <img src="{{ product.imgURL }}" alt="{{ product.productName }}">                              
                           </div>
         
                           <div class="name-of-p product-name"> <!-- Product name -->
@@ -211,24 +180,33 @@
                           <div class="product-txt">                           
         
                               <div class="discount-info">
+                                {% if product.discount_rate and product.campaign_start and product.campaign_end and 
+                                      (product.campaign_start <= current_date <= product.campaign_end) %}
+                                    <div class="discounted-price1">{{ product.discounted_price | currency_format }}</div>
+                                {% else %}
+                                    <div class="price">{{ product.productPrice | currency_format }}</div>
+                                {% endif %}                            
+
                                   {% if product.discount_rate and (product.campaign_start <= current_date <= product.campaign_end) %}
-                                      <div class="discounted-price1">&dollar;{{ product.discounted_price | round(2) }}</div>
-                                      <div class="original-price1">&dollar;{{ product.original_price | round(2) }}</div>
-                                  {% else %}
-                                      <div class="price">&dollar;{{ product.original_price | round(2) }}</div>
+                                  <span class="discount-rate1">-{{ product.discount_rate | int}}%</span>
                                   {% endif %}
-                              </div>
+                              </div>                              
         
                               <div class="rating">
-                                  {% for i in range(1, 6) %}
-                                      {% if i <= product.productRating %}
-                                          <i class='bx bxs-star'></i>
-                                      {% else %}
-                                          <i class='bx bx-star'></i>
-                                      {% endif %}
-                                  {% endfor %}
-                                  ({{ product.productSold }})
-                              </div>           
+                                {% for i in range(1, 6) %}
+                                    {% if product.productRating >= i %}
+                                        <i class="fa-solid fa-star" style="color: #fdce15;"></i>  <!-- Filled star -->
+                                    {% elif (i - product.productRating) < 0.5 %}
+                                        <i class="fa-regular fa-star-half-stroke" style="color: #fdce15;"></i>  <!-- Half-filled star -->
+                                    {% else %}
+                                      <i class="fa-regular fa-star" style="color: #fdce15;"></i>  <!-- Empty star -->
+                                    {% endif %}
+                                {% endfor %}
+                                {% if product.productRating == 0 %}
+                                    <span>Not Rated</span>
+                                {% endif %}
+                                ({{ product.productSold }})
+                            </div>  
                           </div>
                         </a>
                       </div>
@@ -243,21 +221,31 @@
 
 <section id="deals-of-week">
   <div class="deals-container">
-      <h2>Flash Deal</h2>
+      <h2>Flash Deals</h2>
       <div class="promotions-wrapper">
         {% if deals %}
         {% for promotion in deals %}
-        <div class="promotion-item" data-end-date="{{ promotion.end_date }}"> <!-- Add data attribute here -->
-          <div class="discount-rate">-{{ promotion.discount_rate }}% Off</div> <!-- Discount Rate -->  
-          <img src="{{ promotion.img_url }}" alt="{{ promotion.product_name }}" class="product-image">
+        <a href="{{ url_for('product.product_detail', product_id=promotion.productID) }}" class="promotion-link">
+        <div class="promotion-item" data-end-date="{{ promotion.endDate }}"> <!-- Add data attribute here -->
+          <div class="discount-rate">-{{ promotion.discountRate }}% Off</div>
+            <img src="{{ promotion.img_url }}" alt="{{ promotion.productName }}" class="product-image">
             <div class="promotion-info">
-                <h3 class="product-name">{{ promotion.product_name }}</h3>
-                <p class="product-description">{{ promotion.product_desc }}</p>
+                <h3 class="product-name">{{ promotion.productName }}</h3>
                 <div class="price-container">
-                    <span class="discounted-price">${{ promotion.discounted_price }}</span>
-                    <span class="original-price">${{ promotion.original_price }}</span>
+                    <span class="discounted-price">{{ promotion.discounted_price | currency_format }}</span>
+                    <span class="original-price with-discount">{{ promotion.original_price | currency_format }}</span>
                 </div>
-                <button class="add-to-cart">Add to Cart</button>
+                <div class="deals-btn-container">
+                  <form action="{{ url_for('product.addFromCart') }}" method="POST">
+                    <input type="hidden" name="productID" value="{{ promotion.productID }}">
+                    <button type="submit" class="add-to-cart">
+                        <i class="fa-sharp fa-solid fa-cart-plus"></i>
+                        Add to Cart
+                    </button>
+                </form>
+                <button class="add-to-wishlist"><i class="fa-light fa-heart"></i></button> 
+                </div>
+                <p> Hurry up! Promo Ends in:</p>               
                 <div class="timer">
                     <div class="time-item"><span class="days">00</span> Days</div>
                     <div class="time-item"><span class="hours">00</span> Hours</div>
@@ -266,22 +254,14 @@
                 </div>
             </div>
         </div>
+        </a>
         {% endfor %}
-    {% else %}
-        <p>No current promotions available.</p>
-    {% endif %}    
+        {% else %}
+            <p>No current promotions available.</p>
+        {% endif %}    
       </div>
   </div>
 </section>
-
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <div class="alert alert-success flash-message">
-      {{ messages[0] }}
-    </div>
-  {% endif %}
-{% endwith %}
-
 
 <footer>
     <div class="unimerce-info">
@@ -376,6 +356,26 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+    <script>
+      const flashMessages = {{ get_flashed_messages(with_categories=true) | tojson }}; 
+      flashMessages.forEach(function(message) {
+        Swal.fire({
+          icon: message[0], 
+          title: message[1], 
+        });
+      });
+    </script>    
+
+    <script>
+      function performSearch() {
+    const query = document.getElementById('searchInput').value;
+    const category = document.getElementById('categoryDropdown').value;
+    const url = `/search?search=${encodeURIComponent(query)}&category=${encodeURIComponent(category)}`;
+    window.location.href = url;
+      }
+    </script>
+
 </body>
 
 </html>

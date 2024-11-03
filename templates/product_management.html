@@ -8,6 +8,7 @@
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='ic/logo.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='CSS/profile.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/product.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
@@ -16,6 +17,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -61,314 +63,403 @@
             </div>
         </div> 
     </header>
-      
-    <div class="user-profile-container">
-        <div class="user-profile-sidebar">
-            <ul class="user-profile-nav">
-              <li><a href="{{ url_for('profile') }}">Dashboard Overview</a></li>
-              <li><a href="{{ url_for('products_management') }}" class="active">Products Management</a></li>
-              <li><a href="{{ url_for('wishlist') }}">Orders Management</a></li>
-              <li><a href="{{ url_for('wishlist') }}">Promotions & Discounts</a></li>          
-              <li><a href="{{ url_for('wishlist') }}">Customers Management</a></li>   
-              <li><a href="{{ url_for('wishlist') }}">Settings</a></li>
-              <li><a href="{{ url_for('wishlist') }}">Help & Support</a></li>
-              <li><a href="{{ url_for('my_purchases') }}">Logout</a></li>
-          </ul>
-      </div>
-      
-      
-<div class="seller-content">
-    <h2>Products Management</h2>
     
-    <button id="showAddProductFormBtn" onclick="toggleForm('addProductForm')">Add Product</button>
-    <!-- Add/Update Product Form -->
-    <div id="addProductForm" style="display: none;">
-        <form method="POST" action="{{ url_for('add_or_update_product') }}" enctype="multipart/form-data" onsubmit="return validateForm()">
-            <h3 id="formTitle">Add Product</h3>
-            <input type="hidden" id="productID" name="productID">
-            
-            <div class="form-group">
-                <label for="productName">Product Name:</label>
-                <input type="text" id="productName" name="productName" required>
-            </div>
+<div class="user-profile-container">
+    <div class="user-profile-sidebar">
+        <ul class="user-profile-nav">
+            <li><a href="{{ url_for('seller.manage_store') }}">Dashboard Overview</a></li>
+            <li><a href="{{ url_for('seller.products_management') }}" class="active">Products Management</a></li>
+            <li><a href="{{ url_for('user.profile') }}">Orders Management</a></li>
+            <li><a href="{{ url_for('user.profile') }}">Promotions & Discounts</a></li>          
+            <li><a href="{{ url_for('user.profile') }}">Customers Management</a></li>   
+            <li><a href="{{ url_for('user.profile') }}">Settings</a></li>
+            <li><a href="{{ url_for('user.profile') }}">Help & Support</a></li>
+            <li><a href="{{ url_for('user.profile') }}">Logout</a></li>
+        </ul>
+    </div>
 
-            <div class="form-group">
-                <label for="productDesc">Product Description:</label>
-                <textarea id="productDesc" name="productDesc" required></textarea>
-            </div>
-
-            <input type="hidden" id="sellerID" name="sellerID" value="{{ user_id }}" readonly>
-
-            <div class="form-group">
-                <label for="categoryID">Category:</label>
-                <select id="categoryID" name="categoryID" required>
-                    <option value="">Select Category</option>
-                    {% for category in categories %}
-                        <option value="{{ category.categoryID }}" {% if category.categoryID == selected_product.categoryID %}selected{% endif %}>{{ category.categoryName }}</option>
+    <div class="seller-content">
+        <h2>Products Management</h2>    
+            <div id="productList" style="display: block;">          
+                <ul class="product-list">
+                    {% for product in products %}
+                        <li>
+                            <div class="product-container"> 
+                                <div class="image-container">
+                                    <img src="{{ product.imgURL }}" alt="{{ product.productName }}">
+                                </div>
+                                <h3 class="product-name">{{ product.productName }}</h3> 
+                                <div class="prices">{{ product.productPrice | currency_format }}</div> 
+                                <div class="button-container">
+                                    <button class="edits-button" 
+                                            onclick="populateEditForm({
+                                                productID: '{{ product.productID }}',
+                                                productName: '{{ product.productName }}',
+                                                productDesc: '{{ product.productDesc }}',
+                                                productPrice: '{{ product.productPrice }}',
+                                                stock: '{{ product.stock_quantity }}',
+                                                categoryID: '{{ product.categoryID }}',
+                                                subcategoryID: '{{ product.subcategoryID }}'
+                                            })">Edit</button>                        
+                                    <button class="archive-button" onclick="confirmArchive('{{ product.productID }}')">
+                                        <i class="fas fa-archive"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </li>
                     {% endfor %}
-                </select>
-            </div>
+                </ul>
+                
+                    <div class="btn-container">
+                        <button id="showAddProductFormBtn" class="btn-primary" onclick="openForm('add')">Add Product</button>
+                    </div>
+            </div>           
             
-            <div class="form-group">
-                <label for="subcategoryID">Subcategory:</label>
-                <select id="subcategoryID" name="subcategoryID" required>
-                    <option value="">Select Subcategory</option>
-                    {% for subcategory in subcategories %}
-                        <option value="{{ subcategory.subcategoryID }}" {% if subcategory.subcategoryID == selected_product.subcategoryID %}selected{% endif %}>{{ subcategory.subcategoryName }}</option>
-                    {% endfor %}
-                </select>
-            </div>
+            <form id="addProductForm" style="display: none;" method="POST" action="{{ url_for('seller.add_or_update_product') }}" enctype="multipart/form-data">
+                <h3 id="formTitle">Basic Information</h3>
 
-            <div class="form-group">
-                <label for="productImages">Product Images:</label>
-                <input type="file" id="productImages" name="productImages" accept="image/*" multiple >
-            </div>
-
-            <div class="form-group">
-                <label for="productPrice">Product Price:</label>
-                <input type="number" id="productPrice" name="productPrice" step="0.01" required>
-            </div>
-
-            <div class="form-group">
-                <label>Variation (Optional):</label><br>
-                <input type="checkbox" id="colorVariation" name="variation" value="Color" onclick="showVariationOptions()">
-                <label for="colorVariation">Color</label>
-                <input type="checkbox" id="storageVariation" name="variation" value="Storage" onclick="showVariationOptions()">
-                <label for="storageVariation">Storage</label>
-                <input type="checkbox" id="ramVariation" name="variation" value="RAM" onclick="showVariationOptions()">
-                <label for="ramVariation">RAM</label>
-            </div>
-            
-            <div id="variationOptionsContainer" style="display: none;">
-                <div id="colorOptions" class="form-group" style="display: none;">
-                    <label>Color Variation:</label>
-                    <div id="colorSetContainer"></div>
-                    <button type="button" onclick="addColorSet()">+ Add Color Set</button>
-                </div>
-
-                <div id="storageOptionsContainer" style="display: none;">
-                    <div id="storageOptions">
-                        <label for="storageSelect">Choose Storage:</label>
-                        <select id="storageSelect" onchange="showStoragePriceInput(this)">
-                            <option value="">Select Storage Size</option>
-                            <option value="64GB">64GB</option>
-                            <option value="128GB">128GB</option>
-                            <option value="256GB">256GB</option>
-                            <option value="512GB">512GB</option>
-                            <option value="1TB">1TB</option>
-                            <option value="2TB">2TB</option>
-                        </select>
-                        <label>
-                            <input type="checkbox" onchange="toggleAdditionalCost(this)" /> Additional Cost
-                        </label>
-                        <div id="storagePriceContainer" style="display: none;">
-                            <label for="storagePrice">Price for Storage:</label>
-                            <input type="number" id="storagePrice" name="storagePrice" step="0.01" placeholder="Enter Additional Price">
-                            <button type="button" onclick="addStorageVariation()">+ Add Another Storage Variation</button>
+                <div class="image-upload-container">
+                    <label>Product Images</label>
+                    <div class="image-preview-grid" id="imagePreviewGrid">
+                        <!-- Dynamically added images will be displayed here -->
+                        <div class="add-image-button" id="addImageButton" onclick="triggerFileUpload()">
+                            <i class="fa fa-plus"></i>
+                            <p>Add Image</p>
                         </div>
                     </div>
+                    <input type="file" id="imageUploadInput" accept="image/*" multiple onchange="handleImageUpload()" style="display: none;">
                 </div>
-            
-                <div id="ramOptionsContainer" style="display: none;">
-                    <label for="ram">RAM:</label>
-                    <select name="ram" id="ram" onchange="showRamPriceInput(this)">
-                        <option value="">Select RAM Size</option>
-                        <option value="4GB">4GB</option>
-                        <option value="8GB">8GB</option>
-                        <option value="16GB">16GB</option>
-                        <option value="32GB">32GB</option>
-                        <option value="64GB">64GB</option>
-                        <option value="128GB">128GB</option>
+
+                <!-- General Product Details -->
+                <input type="hidden" id="productID" name="productID">
+
+                <div class="form-group">
+                    <label for="productName">Product Name:</label>
+                    <input type="text" id="productName" name="productName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="categoryID">Category:</label>
+                    <select id="categoryID" name="categoryID" required>
+                        <option value="">Select Category</option>
+                        {% for category in categories %}
+                            <option value="{{ category['categoryID'] }}">{{ category['name'] }}</option>
+                        {% endfor %}
                     </select>
-                    <label>
-                        <input type="checkbox" onchange="toggleAdditionalCost(this)" /> Additional Cost
-                    </label>
-                    <div id="ramPriceContainer" style="display: none;">
-                        <label for="ramPrice">Price for RAM:</label>
-                        <input type="number" id="ramPrice" name="ramPrice" step="0.01" placeholder="Enter Additional Price">
-                    </div>
-                    <button type="button" onclick="addRamVariation()">+ Add Another Variation</button>
                 </div>
-            </div>
-                    
-            <button type="submit" class="user-profile-save-btn">Save Product</button>
-        </form>
+
+                
+                <div class="form-group">
+                    <label for="subcategoryID">Subcategory:</label>
+                        <select id="subcategoryID" name="subcategoryID" required>
+                            <option value="">Select Subcategory</option>
+                        </select>
+                </div>                
+
+                <div class="form-group">
+                    <label for="productDesc">Product Description:</label>
+                    <textarea id="productDesc" name="productDesc" required></textarea>
+                </div>             
+
+                <div class="form-group">
+                    <label for="productPrice">Base Price:</label>
+                    <input type="number" id="productPrice" name="productPrice" step="0.01" required>
+                </div>
+                
+                <!-- Stock Management -->
+                <div class="form-group" id="stockSection">
+                    <label for="stockQuantity">Total Stock Quantity (No Variations):</label>
+                    <input type="number" id="stockQuantity" name="stockQuantity" min="0">
+                </div>
+
+                <!-- Variation Management Section -->
+                <div class="variation-container">
+                    <h3>Product Variation</h3>
+                    <div id="variationList"></div>
+                    <button type="button" class="add-variation-btn" onclick="addVariation()">Add Variation</button>
+                </div>
+
+                <!-- Variation Table -->
+                <div class="variation-table-container">
+                    <h3>Product Variations Table</h3>
+                    <table class="variation-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th id="variationHeaders">Variation 1</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody id="variationTableBody">
+                            <!-- Rows will be generated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="btn-container">
+                    <button type="submit" class="user-profile-save-btn">Save Product</button>
+                    <button class="btn-secondary" onclick="closeForm()">Cancel</button>
+                </div>
+            </form>
+        </div>
     </div>
-        
-    <h3>Products</h3>
-    <ul class="product-list">
-        {% for product in products %}
-            <li>
-                <div class="product-container"> 
-                    <div class="image-container">
-                        <img src="{{ product.imgURL }}" alt="{{ product.productName }}">
-                    </div>
-                    <h3 class="product-name">{{ product.productName }}</h3> 
-                    <div class="prices">${{ product.productPrice }}</div> 
-                    <div class="button-container">
-                        <button class="edits-button" onclick="populateEditForm({
-                            productID: '{{ product.productID }}',
-                            productName: '{{ product.productName }}',
-                            productDesc: '{{ product.productDescription }}',
-                            productPrice: '{{ product.productPrice }}',
-                            categoryID: '{{ product.categoryID }}',
-                            subcategoryID: '{{ product.subcategoryID }}'
-                        })">Edit</button>                        
-                        <button class="archive-button" onclick="confirmArchive('{{ product.productID }}')"><i class="fas fa-archive"></i></button>
-                    </div>
-                </div>
-            </li>
-        {% endfor %}
-    </ul>
 </div>
 
 <script>
-function populateEditForm(product) {
-    console.log('Product Data:', product); // Check the product object
-    
-    document.getElementById('formTitle').innerText = 'Update Product';
-    document.getElementById('productID').value = product.productID || '';
-    document.getElementById('productName').value = product.productName || '';
-    document.getElementById('productDesc').value = product.productDesc || '';
-    document.getElementById('categoryID').value = product.categoryID || '';
-    document.getElementById('subcategoryID').value = product.subcategoryID || '';
-    document.getElementById('productPrice').value = product.productPrice || '';
-
+function openForm(mode) {
     document.getElementById('addProductForm').style.display = 'block';
+    document.getElementById('productList').style.display = 'none';
+
+    if (mode === 'add') {
+        document.getElementById('formTitle').innerText = 'Add Product';
+        resetForm();
+    }
 }
 
+function closeForm() {
+    document.getElementById('addProductForm').style.display = 'none';
+    document.getElementById('productList').style.display = 'block';
+    resetForm();
+}
 
-document.getElementById('categoryID').addEventListener('change', function() {
-    const categoryID = this.value;
+function resetForm() {
+    document.getElementById('addProductForm').reset();
+    document.getElementById('variationsContainer').innerHTML = '';
+    document.getElementById('stockSection').style.display = 'block';
+}
 
-    if (categoryID) {
-        fetch('/fetch_subcategories', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: 'categoryID=' + categoryID
-        })
-        .then(response => response.json())
-        .then(data => {
-            const subcategorySelect = document.getElementById('subcategoryID');
-            subcategorySelect.innerHTML = '<option value="">Select Subcategory</option>';
-            data.subcategories.forEach(function(subcategory) {
-                const option = document.createElement('option');
-                option.value = subcategory.subcategoryID;
-                option.textContent = subcategory.subcategoryName;
-                subcategorySelect.appendChild(option);
-            });
-        })
-        .catch(error => console.error('Error:', error));
+function populateEditForm(product) {
+    openForm('edit');
+    document.getElementById('formTitle').innerText = 'Update Product';
+
+    document.getElementById('productID').value = product.productID;
+    document.getElementById('productName').value = product.productName;
+    document.getElementById('productDesc').value = product.productDesc;
+    document.getElementById('categoryID').value = product.categoryID;    
+    document.getElementById('productPrice').value = product.productPrice;
+    document.getElementById('stockQuantity').value = product.stock;
+
+    if (product.hasVariations) {
+        document.getElementById('stockSection').style.display = 'none';
+        document.getElementById('stockQuantity').value = '';
     } else {
-        document.getElementById('subcategoryID').innerHTML = '<option value="">Select Subcategory</option>';
+        document.getElementById('stockSection').style.display = 'block';
+        document.getElementById('stockQuantity').value = product.stock;
     }
+
+    fetchSubcategoriesAndSelect(product.categoryID, product.subcategoryID);    
+}
+
+function fetchSubcategoriesAndSelect(categoryId, selectedSubcategoryId) {
+    const subcategorySelect = document.getElementById('subcategoryID');
+    subcategorySelect.innerHTML = '<option value="">Select Subcategory</option>';
+
+    if (categoryId) {
+        fetch(`/seller/fetch_subcategories/${categoryId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch subcategories');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Subcategories Data:', data);
+
+                if (data.length === 0) {
+                    subcategorySelect.innerHTML = '<option value="">No subcategories available</option>';
+                } else {
+                    data.forEach(subcategory => {
+                        const option = document.createElement('option');
+                        option.value = subcategory.subcategoryID;
+                        option.textContent = subcategory.subcategoryName;
+                        subcategorySelect.appendChild(option);
+                    });
+
+                    // Automatically select the correct subcategory if provided
+                    if (selectedSubcategoryId) {
+                        subcategorySelect.value = selectedSubcategoryId;
+                    }
+                }
+            })
+            .catch(error => console.error('Error fetching subcategories:', error));
+    }
+}
+
+document.getElementById('categoryID').addEventListener('change', function () {
+    const categoryId = this.value;
+
+    // Reset the subcategory when the category changes
+    fetchSubcategoriesAndSelect(categoryId, null);
 });
 
-function showVariationOptions() {
-    const colorChecked = document.getElementById("colorVariation").checked;
-    const storageChecked = document.getElementById("storageVariation").checked;
-    const ramChecked = document.getElementById("ramVariation").checked;
+let variationCount = 0;
+let variations = [];
 
-    const variationOptionsContainer = document.getElementById("variationOptionsContainer");
-    variationOptionsContainer.style.display = colorChecked || storageChecked || ramChecked ? "block" : "none";
+function addVariation() {
+    variationCount++;
+    const container = document.getElementById('variationList');
 
-    document.getElementById("colorOptions").style.display = colorChecked ? "block" : "none";
-    document.getElementById("storageOptionsContainer").style.display = storageChecked ? "block" : "none";
-    document.getElementById("ramOptionsContainer").style.display = ramChecked ? "block" : "none";
-}
+    const variationBlock = document.createElement('div');
+    variationBlock.classList.add('variation-item');
+    variationBlock.id = `variation-${variationCount}`;
 
-function showStoragePriceInput(select) {
-    document.getElementById("storagePriceContainer").style.display = select.value ? "block" : "none";
-}
-
-function showRamPriceInput(select) {
-    document.getElementById("ramPriceContainer").style.display = select.value ? "block" : "none";
-}
-
-function toggleAdditionalCost(checkbox) {
-    const priceContainer = checkbox.parentElement.nextElementSibling;
-    priceContainer.style.display = checkbox.checked ? "block" : "none";
-}
-
-function addColorSet() {
-    const colorSetContainer = document.getElementById("colorSetContainer");
-    const colorInputWrapper = document.createElement("div");
-    const colorInput = document.createElement("input");
-    const colorPicker = document.createElement("input");
-
-    colorInput.type = "text";
-    colorInput.name = "colorSet[]";
-    colorInput.placeholder = "Enter Color";
-    colorInput.style.marginRight = "10px";
-
-    colorPicker.type = "color"; // This creates a color picker input
-    colorPicker.name = "colorPicker[]";
-    colorPicker.style.marginRight = "10px";
-
-    colorInputWrapper.appendChild(colorInput);
-    colorInputWrapper.appendChild(colorPicker);
-    colorSetContainer.appendChild(colorInputWrapper);
-}
-
-function addStorageVariation() {
-    const storageOptionsContainer = document.getElementById("storageOptions");
-    const newStorageDiv = document.createElement("div");
-    newStorageDiv.innerHTML = `
-        <label for="newStorageSelect">Choose Storage:</label>
-        <select name="newStorageSelect" onchange="showStoragePriceInput(this)">
-            <option value="">Select Storage Size</option>
-            <option value="64GB">64GB</option>
-            <option value="128GB">128GB</option>
-            <option value="256GB">256GB</option>
-            <option value="512GB">512GB</option>
-            <option value="1TB">1TB</option>
-            <option value="2TB">2TB</option>
-        </select>
-        <label>
-            <input type="checkbox" onchange="toggleAdditionalCost(this)" /> Additional Cost
-        </label>
-        <div style="display: none;">
-            <label for="newStoragePrice">Price for Storage:</label>
-            <input type="number" name="newStoragePrice" step="0.01" placeholder="Enter Additional Price">
+    variationBlock.innerHTML = `
+        <h4>Variation ${variationCount}:</h4>
+        <input type="text" placeholder="Variation Name (e.g., Color, Size)" class="variation-name" required>
+        <h5>Options:</h5>
+        <div class="option-list" id="optionList-${variationCount}">
+            <div class="option-input-group">
+                <input type="text" placeholder="Option" class="option-input" required>
+                <button type="button" class="remove-option-btn" onclick="removeOption(this)">&#128465;</button>
+            </div>
+        </div>
+        <div class="add-option-btn" onclick="addOption(${variationCount})">
+            <i class="add-icon">+</i> Add another option
         </div>
     `;
-    storageOptionsContainer.appendChild(newStorageDiv);
+
+    container.appendChild(variationBlock);
+
+    // Hide the base price and stock quantity sections
+    document.getElementById('productPrice').closest('.form-group').style.display = 'none';
+    document.getElementById('stockSection').style.display = 'none';
 }
 
-function addRamVariation() {
-    const ramOptionsContainer = document.getElementById("ramOptionsContainer");
-    const newRamDiv = document.createElement("div");
-    newRamDiv.innerHTML = `
-        <label for="newRamSelect">RAM:</label>
-        <select name="newRamSelect" onchange="showRamPriceInput(this)">
-            <option value="">Select RAM Size</option>
-            <option value="4GB">4GB</option>
-            <option value="8GB">8GB</option>
-            <option value="16GB">16GB</option>
-            <option value="32GB">32GB</option>
-            <option value="64GB">64GB</option>
-            <option value="128GB">128GB</option>
-        </select>
-        <label>
-            <input type="checkbox" onchange="toggleAdditionalCost(this)" /> Additional Cost
-        </label>
-        <div style="display: none;">
-            <label for="newRamPrice">Price for RAM:</label>
-            <input type="number" name="newRamPrice" step="0.01" placeholder="Enter Additional Price">
-        </div>
+function addOption(variationId) {
+    const optionList = document.getElementById(`optionList-${variationId}`);
+
+    // Create a new option input group
+    const optionInputGroup = document.createElement('div');
+    optionInputGroup.classList.add('option-input-group');
+
+    optionInputGroup.innerHTML = `
+        <input type="text" placeholder="Option" class="option-input" required>
+        <button type="button" class="remove-option-btn" onclick="removeOption(this)">&#128465;</button>
     `;
-    ramOptionsContainer.appendChild(newRamDiv);
+
+    optionList.appendChild(optionInputGroup);
+
+    generateVariationTable();
 }
 
-function validateForm() {
-    // Implement your validation logic here
-    return true; // Allow the form submission to proceed
+function removeOption(button) {
+    const optionGroup = button.parentElement;
+    optionGroup.remove();
+
+    generateVariationTable();
 }
 
-function toggleForm(formId) {
-    const form = document.getElementById(formId);
-    form.style.display = form.style.display === "none" ? "block" : "none";
+function updateVariationHeaders() {
+    const headerRow = document.getElementById('variationHeaders');
+    headerRow.innerHTML = variations.map((v, index) => `Variation ${index + 1} (${v.name})`).join('</th><th>');
 }
+
+function generateVariationTable() {
+    const tableBody = document.getElementById('variationTableBody');
+    tableBody.innerHTML = ''; // Clear existing rows
+
+    const rows = generateRowsForVariations(variations, 0, []);
+
+    rows.forEach(rowData => {
+        const row = document.createElement('tr');
+
+        // Image cell
+        const imgCell = document.createElement('td');
+        imgCell.innerHTML = `<input type="file" accept="image/*">`;
+        row.appendChild(imgCell);
+
+        // Add variation cells
+        rowData.forEach(data => {
+            const cell = document.createElement('td');
+            cell.textContent = data;
+            row.appendChild(cell);
+        });
+
+        // Price cell
+        const priceCell = document.createElement('td');
+        priceCell.innerHTML = `<input type="number" placeholder="Price" class="price-input" required>`;
+        row.appendChild(priceCell);
+
+        // Stock cell
+        const stockCell = document.createElement('td');
+        stockCell.innerHTML = `<input type="number" placeholder="Stock" class="stock-input" min="0" required>`;
+        row.appendChild(stockCell);
+
+        tableBody.appendChild(row);
+    });
+}
+
+function generateRowsForVariations(variationList, index, currentRow) {
+    if (index === variationList.length) {
+        return [currentRow];
+    }
+
+    const rows = [];
+    const currentVariation = variationList[index];
+
+    currentVariation.options.forEach(option => {
+        const newRow = currentRow.slice(); // Copy current row
+        newRow.push(option);
+        rows.push(...generateRowsForVariations(variationList, index + 1, newRow));
+    });
+
+    return rows;
+}
+const imagePreviewGrid = document.getElementById('imagePreviewGrid');
+const addImageButton = document.getElementById('addImageButton');
+const imageUploadInput = document.getElementById('imageUploadInput');
+
+function triggerFileUpload() {
+    imageUploadInput.click();
+}
+
+function handleImageUpload() {
+    const files = imageUploadInput.files;
+    
+    if (files.length > 0) {
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                // Create image preview
+                const imageContainer = document.createElement('div');
+                imageContainer.classList.add('image-preview');
+                imageContainer.style.backgroundImage = `url('${e.target.result}')`;
+
+                // Add a remove button to the image
+                const removeButton = document.createElement('button');
+                removeButton.classList.add('remove-image');
+                removeButton.innerHTML = '&times;';
+                removeButton.onclick = function() {
+                    imagePreviewGrid.removeChild(imageContainer);
+                    checkImageCount();
+                };
+
+                imageContainer.appendChild(removeButton);
+                imagePreviewGrid.insertBefore(imageContainer, addImageButton);
+                checkImageCount();
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        // Clear input after handling
+        imageUploadInput.value = '';
+    }
+}
+
+function checkImageCount() {
+    const imageCount = imagePreviewGrid.querySelectorAll('.image-preview').length;
+    if (imageCount >= 9) {
+        addImageButton.style.display = 'none';
+    } else {
+        addImageButton.style.display = 'flex';
+        addImageButton.querySelector('p').textContent = `Add Image ${imageCount + 1}/9`;
+    }
+}
+
 
 </script>
 

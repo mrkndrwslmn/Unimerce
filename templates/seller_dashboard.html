@@ -61,28 +61,30 @@
             </div>
         </div> 
     </header>
-      
+    
     <div class="user-profile-container">
         <div class="user-profile-sidebar">
             <ul class="user-profile-nav">
-              <li><a href="{{ url_for('profile') }}" class="active">Dashboard Overview</a></li>
-              <li><a href="{{ url_for('products_management') }}">Products Management</a></li>
-              <li><a href="{{ url_for('wishlist') }}">Orders Management</a></li>
-              <li><a href="{{ url_for('wishlist') }}">Promotions & Discounts</a></li>          
-              <li><a href="{{ url_for('wishlist') }}">Customers Management</a></li>   
-              <li><a href="{{ url_for('wishlist') }}">Settings</a></li>
-              <li><a href="{{ url_for('wishlist') }}">Help & Support</a></li>
-              <li><a href="{{ url_for('my_purchases') }}">Logout</a></li>
-          </ul>
-      </div>
-      
-      <div class="seller-content">
-          <h2>Dashboard Overview</h2>
-          <form method="POST" action="{{ url_for('profile') }}" enctype="multipart/form-data" style="display: inline;">
+                <li><a href="{{ url_for('seller.manage_store') }}" class="active">Dashboard Overview</a></li>
+                <li><a href="{{ url_for('seller.products_management') }}">Products Management</a></li>
+                <li><a href="{{ url_for('user.profile') }}">Orders Management</a></li>
+                <li><a href="{{ url_for('user.profile') }}">Promotions & Discounts</a></li>          
+                <li><a href="{{ url_for('user.profile') }}">Customers Management</a></li>   
+                <li><a href="{{ url_for('user.profile') }}">Settings</a></li>
+                <li><a href="{{ url_for('user.profile') }}">Help & Support</a></li>
+                <li><a href="{{ url_for('user.profile') }}">Logout</a></li>
+            </ul>
+    </div>
+    
+    <div class="seller-content">
+        <h2>Dashboard Overview</h2>
+        <form method="POST" action="{{ url_for('user.profile') }}" enctype="multipart/form-data" style="display: inline;">
             
             <div class="user-profile-image-container">
-              <img src="{{ user.profilePic if user.profilePic else 'static/default_profile.jpg' }}" alt="Profile Image" id="profile-img">
-              
+                <img src="{{ seller.imgURL if seller.imgURL else 'static/default_profile.jpg' }}"
+                alt="Profile Image" 
+                id="profile-img">
+           
                   <input type="file" name="profile_image" id="file-input" accept="image/*" onchange="previewImage(event)" style="display: none;">
                   <label1 for="file-input" class="custom-file-upload">
                     Select Image
@@ -129,7 +131,7 @@
               <p>Username cannot be changed. To save changes, press Save Changes. Else, your edits won't be saved.</p>  
                   <button type="submit" class="user-profile-save-btn">Save Changes</button>
             </form>
-                  <form method="POST" action="{{ url_for('logout') }}" style="display: inline;">
+                  <form method="POST" action="{{ url_for('user.logout') }}" style="display: inline;">
                   <button type="submit" class="logout-btn">Logout</button>
                 </form>            
             </div>

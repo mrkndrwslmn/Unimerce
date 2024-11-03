@@ -1,15 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='shopping_cart.css') }}">
     <title>Shopping Cart</title>
+    <link rel="icon" href="{{ url_for('static', filename='logoicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="https://atugatran.github.io/FontAwesome6Pro/css/all.min.css" >
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet">
+    <link rel='stylesheet' href='https://unpkg.com/boxicons@latest/css/boxicons.min.css' />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
+
+
 <body>
+    
+    <header>
+
+        <div class="header-top">
+    
+            <div class="container">
+                <div class="left-contain">
+                    <a href="{{ url_for('seller.manage_store') }}" class="seller-centre">
+                    <p>Seller Centre</p>
+                    </a>
+                    <a href="{{ url_for('seller.seller_application') if user.userType=='buyer' else url_for('seller.manage_store') }}" class="apply-seller">
+                        <p>Sell on UNIMERCE</p>
+                    </a>
+                    <a href="{{url_for('homepage')}}" class="apply-seller">
+                        <p>Blogs</p>
+                    </a>
+                </div>
+                {% if user %}
+                <!-- Show profile picture if user is logged in -->
+                <a href="{{ url_for('user.profile') }}">
+                    <div class="user-profile-image-container">
+                        <img 
+                        src="{{ url_for('static', filename=user.profilePic.replace('static/', '')) if user.profilePic else url_for('static', filename='default_profile.jpg') }}" 
+                        alt="Profile Image" 
+                        id="profile-img">
+                        {{ user.firstName }}
+                    </div>
+                </a>
+                {% else %}
+                    <!-- Show LOGIN and REGISTER links if user is not logged in -->
+                    <div class="auth-links">
+                        <a href="{{ url_for('user.login') }}">LOGIN</a>
+                        <a href="{{ url_for('user.register') }}">REGISTER</a>
+                    </div>
+                {% endif %}           
+            </div>
+        </div>
+    </div>
+    
+        <div class="header-main">    
+            <div class="container">
+                <a href="{{url_for('homepage')}}" class="header-logo">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Banner 1">
+                </a>
+                <div class="header-flex">
+                    <div class="header-controls">
+                        <select id="categoryDropdown" class="form-select">
+                            <option value="">All</option>
+                            {% for category in categories %}
+                                <option value="{{ category }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="header-search-container">
+                        <input type="search" id="searchInput" name="search" class="search-field" placeholder="Search your favorite products">
+                        <button type="button" class="search-btn" onclick="performSearch()">Search</button>
+                    </div>
+                </div>
+                <div class="header-user-actions">             
+                    <a class="action-btn" href="{{ url_for('product.shoppingcart') }}">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span class="count">0</span>
+                    </a>
+                    <button class="action-btn">
+                        <i class="fa-sharp fa fa-bell"></i>
+                        <span class="count">0</span>
+                    </button>  
+                </div>
+            </div>
+        </div>
+    </div>          
+    
+        </nav>
+    
+    </header>
     <div class="cart-container">
         <h1>Shopping Cart</h1>
-        {% if cart_items %}
+        {% if shopping_cart %}
             <table class="cart-table">
                 <thead>
                     <tr>
@@ -21,18 +111,41 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for item in cart_items %}
+                    {% for item in shopping_cart %}
                         <tr>
-                            <td>{{ item.product_name }}</td>
-                            <td>${{ item.product_price }}</td>
                             <td>
-                                <input type="number" value="{{ item.quantity }}" min="1" max="99" id="quantity-{{ item.product_id }}">
+                                <div class="product-info">
+                                    <input type="checkbox" class="select-item" data-price="{{ item.productPrice }}" data-quantity="{{ item.quantity }}" onchange="updateTotal()">                                                
+                                    <img src="{{ item.imgURL }}" alt="{{ item.productName }}" class="product-image">
+                                    <span>{{ item.productName }}</span>
+                                </div>
                             </td>
-                            <td>${{ item.product_price * item.quantity }}</td>
+                            <td>{{ item.productPrice | currency_format }}</td>
                             <td>
-                                <form action="{{ url_for('remove_from_cart') }}" method="POST">
-                                    <input type="hidden" name="productID" value="{{ item.product_id }}">
-                                    <button type="submit" class="btn btn-danger">Remove</button>
+                                <div class="quantity-input-group">
+                                    <button type="button" class="quantity-btn quantity-btn-minus" aria-label="Decrease quantity">
+                                        <i class="fa-solid fa-minus"></i>
+                                    </button>
+                                    <input type="number" 
+                                        value="{{ item.quantity }}" 
+                                        min="1" 
+                                        max="{{ item.stock_quantity }}" 
+                                        id="quantity-{{ item.productID }}"
+                                        class="quantity-input"
+                                        aria-label="Product quantity"
+                                        data-product-id="{{ item.productID }}"
+                                        data-price="{{ item.productPrice }}"
+                                        data-stock="{{ item.stock_quantity }}">
+                                    <button type="button" class="quantity-btn quantity-btn-plus" aria-label="Increase quantity">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </td>
+                            <td>{{ ( item.productPrice | float * item.quantity | float ) | currency_format }}</td>
+                            <td>
+                                <form action="{{ url_for('product.removeFromCart') }}" method="POST">
+                                    <input type="hidden" name="productID" value="{{ item.productID }}">
+                                    <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash"></i></button>
                                 </form>
                             </td>
                         </tr>
@@ -41,13 +154,140 @@
             </table>
             <div class="cart-summary">
                 <h2>Cart Summary</h2>
-                <p>Total: $<span id="total-price">{{ total_price }}</span></p>
-                <a href="{{ url_for('checkout') }}" class="btn btn-success">Proceed to Checkout</a>
+                <p>Total: <span id="total-price">
+                    {{ 0 | currency_format }}
+                </span></p>
+                <a href="{{ url_for('homepage') }}" class="btn-success">Proceed to Checkout</a>
             </div>
         {% else %}
             <p>Your cart is empty. Please add items to your cart.</p>
-            <a href="{{ url_for('products') }}" class="btn btn-primary">Continue Shopping</a>
+            <a href="{{ url_for('homepage') }}" class="btn-primary">Continue Shopping</a>
         {% endif %}
     </div>
+
+    <script>
+        function currencyFormat(number) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'PHP'
+            }).format(number);
+        }
+
+        function initializeQuantityControls() {
+            document.querySelectorAll('.quantity-input-group').forEach(group => {
+                const input = group.querySelector('.quantity-input');
+                const minusBtn = group.querySelector('.quantity-btn-minus');
+                const plusBtn = group.querySelector('.quantity-btn-plus');
+                const productItem = group.closest('tr'); // Reference the entire row for updates
+                const pricePerUnit = parseFloat(input.getAttribute('data-price'));
+                const stockQuantity = parseInt(input.getAttribute('data-stock'), 10);
+
+                let currentValue = parseInt(input.value) || 1;
+                const minValue = parseInt(input.getAttribute('min')) || 1;
+
+                function updateDisplay() {
+                input.value = currentValue;
+                minusBtn.disabled = currentValue <= minValue;
+                plusBtn.disabled = currentValue >= stockQuantity;
+
+                // Update the total price cell in the row
+                const totalCell = productItem.querySelector('.total-price');
+                if (totalCell) {
+                    totalCell.innerText = currencyFormat(currentValue * pricePerUnit);
+                }
+
+                const checkbox = productItem.querySelector('.select-item');
+                if (checkbox && checkbox.checked) {
+                    checkbox.setAttribute('data-quantity', currentValue);
+                    updateTotal();
+                }
+            }
+                        
+            function handleIncrement() {
+            if (currentValue < stockQuantity) {
+                currentValue++;
+                updateDisplay();
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        }
+
+        function handleDecrement() {
+            if (currentValue > minValue) {
+                currentValue--;
+                updateDisplay();
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        }
+
+        function handleManualInput() {
+            let newValue = parseInt(input.value) || minValue;
+            newValue = Math.max(minValue, Math.min(stockQuantity, newValue));
+            currentValue = newValue;
+            updateDisplay();
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        plusBtn.addEventListener('click', handleIncrement);
+        minusBtn.addEventListener('click', handleDecrement);
+        input.addEventListener('input', handleManualInput);
+        input.addEventListener('blur', handleManualInput);
+
+        // Initialize display based on the current value
+        updateDisplay();
+    });
+}
+
+function updateTotal() {
+    let total = 0;
+    const selectedItems = document.querySelectorAll('.select-item:checked');
+
+    selectedItems.forEach(item => {
+        const price = parseFloat(item.getAttribute('data-price'));
+        const quantity = parseInt(item.getAttribute('data-quantity'), 10);
+        total += price * quantity;
+    });
+
+    document.getElementById('total-price').innerText = currencyFormat(total);
+}
+
+function proceedToCheckout() {
+    const selectedItems = document.querySelectorAll('.select-item:checked');
+
+    if (selectedItems.length === 0) {
+        alert('Please select at least one item to proceed to checkout.');
+        return;
+    }
+
+    // Collect selected items data for checkout
+    const checkoutItems = Array.from(selectedItems).map(item => {
+        const quantity = parseInt(item.getAttribute('data-quantity'), 10);
+        const price = parseFloat(item.getAttribute('data-price'));
+        const productId = item.getAttribute('data-product-id');
+        const productName = item.getAttribute('data-product-name');
+        
+        return {
+            productId,
+            productName,
+            quantity,
+            price,
+            total: quantity * price
+        };
+    });
+
+    // You can either submit this data to your server or store it in session storage
+    // for the checkout page to use
+    sessionStorage.setItem('checkoutItems', JSON.stringify(checkoutItems));
+    
+    // Add your form submission logic here, or navigate to the checkout page
+    // window.location.href = '/checkout'; // Uncomment and modify as needed
+    alert('Proceeding to checkout with selected items.');
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    initializeQuantityControls();
+});
+
+    </script>
 </body>
 </html>

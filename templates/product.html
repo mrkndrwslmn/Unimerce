@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 <!DOCTYPE html>
 <html lang="en">
 
@@ -63,7 +61,7 @@
                     </div>
                     <div class="header-search-container">
                         <input type="search" name="search" class="search-field form-control" placeholder="Search your favorite products">
-                        <button type="button" class="search-btn btn btn-primary">Search</button>
+                        <button type="button" class="search-btn">Search</button>
                     </div>
                 </div>
                 <div class="header-user-actions">
@@ -76,17 +74,58 @@
     </header>
     
     <main>
-      <div class="main-product-containers">
-          <div class="product-wrapper">
-              <!-- Left Container for Image -->
-              <div class="left-container-img">
-                  <img src="{{ product.imgURL }}" alt="{{ product.productName }}" class="product-image img-fluid">
-              </div>
-  
-              <!-- Right Container for Product Information -->
-              <div class="right-container-info">
-                  <h1 class="product-name">{{ product.productName }}</h1>
-                  <p class="product-description">{{ product.productDescription }}</p>
+    <div class="main-product-containers">
+        <div class="product-wrapper">
+            <!-- Left Container for Image -->
+            <div id="productCarousel" class="left-container-img" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    {% set images = product.imageURLs.split(',') if product.imageURLs else [] %} 
+                    
+                        {% if images %}
+                            {% for image in images %}
+                            <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                    <img src="{{ image }}" 
+                                        class="d-block w-100" alt="{{ product.productName }}"
+                                        onerror="this.onerror=null; this.src='/static/images/placeholder.png';">
+                            </div>  
+                            {% endfor %}
+                        {% else %}
+                            <p>No images available for this product.</p>
+                        {% endif %}              
+                                    
+                    {% if images|length > 1 %}
+                        <!-- Carousel Controls -->
+                        <button class="carousel-control-prev1" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                            <i class="fa-solid fa-chevron-left"></i>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next1" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                            <i class="fa-solid fa-chevron-right"></i>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    {% endif %}
+                </div>
+
+                    <!-- Thumbnails -->
+                    {% if images %}
+                    <div class="carousel-thumbnails">
+                        <div class="thumbnails-wrapper">
+                            {% for image in images %}
+                            <img src="{{ image }}" class="thumbnail" 
+                                alt="Thumbnail {{ loop.index }}"
+                                onclick="jumpToSlide({{ loop.index0 }})">
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+            </div>              
+
+                
+
+            <!-- Right Container for Product Information -->
+            <div class="right-container-info">
+                <h1 class="product-name">{{ product.productName }}</h1>
+                <p class="product-description">{{ product.productDesc }}</p>
 
                     <!-- Price Section -->
                     <div class="price-container">
@@ -94,96 +133,169 @@
                             {% set start_date = product.promotion.startDate %}
                             {% set end_date = product.promotion.endDate %}
                             {% if start_date <= current_date <= end_date %}
-                                <div class="discounted-price">&dollar;{{ product.promotion.discountedPrice | round(2) }}</div>
-                                <div class="original-price with-discount">&dollar;{{ product.productPrice | round(2) }}</div>
+                                <div class="discounted-price">{{ product.promotion.discountedPrice | currency_format }}</div>
+                                <div class="original-price with-discount">{{ product.productPrice | currency_format }}</div>
                                 {% else %}
-                                <div class="original-price">&dollar;{{ product.productPrice | round(2) }}</div>
+                                <div class="original-price">{{product.productPrice | currency_format }}</div>
                             {% endif %}
                         {% else %}
-                            <div class="original-price">&dollar;{{ product.productPrice | round(2) }}</div>
+                            <div class="original-price">{{ product.productPrice | currency_format }}</div>
                         {% endif %}
                     </div>              
                     {% if product.promotion is defined and product.promotion %}
                     <div class="saved-discount">Save {{ product.promotion.discountRate | int }}% Off</div>
                     {% endif %}
                     <!-- Rating Section -->
-                  <div class="product-rating">
-                      {% for i in range(1, 6) %}
-                          {% if i <= product.productRating %}
-                              <i class='bx bxs-star'></i>
-                          {% else %}
-                              <i class='bx bx-star'></i>
-                          {% endif %}
-                      {% endfor %}
-                      <span class="sold-count">({{ product.productSold }} sold)</span>
-                  </div>
-  
-                  <!-- Variations Section -->
-                  {% if product.variations %}
-                      <div class="variations">
-                          <h3>Variations:</h3>
-                          <select name="variation" id="variation-select" class="form-select">
-                              {% for variation in product.variations %}
-                                  <option value="{{ variation.variationID }}">{{ variation.variationValue }}</option>
-                              {% endfor %}
-                          </select>
-                      </div>
-                  {% endif %}
-  
-                  <!-- Quantity Section -->
-                  <div class="quantity-container">
-                      <h3>Quantity:</h3>
-                      <button type="button" class="quantity-button" id="minus-btn">-</button>
-                      <input type="number" id="quantity" value="1" min="1" class="form-control" style="width: 60px; display: inline;">
-                      <button type="button" class="quantity-button" id="plus-btn">+</button>
-                  </div>
-  
-                  <!-- Action Buttons -->
-                  <div class="action-buttons">
-                      <button type="button" class="btn btn-add-to-cart btn-primary">Add to Cart</button>
-                      <button type="button" class="btn btn-buy-now btn-success">Buy Now</button>
-                  </div>
-              </div>
-          </div>
-      </div>
+                <div class="product-rating">
+                    {% for i in range(1, 6) %}
+                        {% if product.productRating >= i %}
+                            <i class="fa-solid fa-star" style="color: #fdce15;"></i>  <!-- Filled star -->
+                        {% elif (i - product.productRating) < 0.5 %}
+                            <i class="fa-regular fa-star-half-stroke" style="color: #fdce15;"></i>  <!-- Half-filled star -->
+                        {% else %}
+                        <i class="fa-regular fa-star" style="color: #fdce15;"></i>  <!-- Empty star -->
+                        {% endif %}
+                    {% endfor %}
+                    {% if product.productRating == 0 %}
+                        <span>Not Rated</span>
+                    {% endif %}
+                        <span class="sold-count">({{ product.productSold }} sold)</span>
+                </div>
 
-      <div class="seller-info-container">
-        <div class="seller-basics">
-            <div class="seller-basics-img">
-                <img src="{{ seller.imgURL }}" alt="{{ seller.shopName }}" class="seller-image img-fluid">
+                <!-- Variations Section -->
+                {% if product.variations %}
+                    <div class="variations">
+                        <h3>Variations:</h3>
+                        <select name="variation" id="variation-select" class="form-select">
+                            {% for variation in product.variations %}
+                                <option value="{{ variation.variationID }}">{{ variation.variationValue }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                {% endif %}
+
+                    <!-- Quantity Section -->
+                    <div class="quantity-container">
+                        <h3>Quantity:</h3>
+                        <button type="button" class="quantity-button" id="minus-btn">-</button>
+                        <input type="number" id="quantity" value="1" min="1" class="form-control" style="width: 60px; display: inline;">
+                        <button type="button" class="quantity-button" id="plus-btn">+</button>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                    <button type="button" class="btn-add-to-cart">
+                        <i class="fa-sharp fa-solid fa-cart-plus"></i>  
+                        Add to Cart
+                    </button>
+
+                    <button type="button" class="btn-buy-now">Buy Now</button>
+                </div>
             </div>
+        </div>
+    </div>
 
-            <div class="seller-details">
+<div class="seller-info-container">
+    <div class="seller-basics">
+        <div class="seller-basics-img">
+            <img src="{{ seller.imgURL }}" alt="{{ seller.shopName }}" class="seller-image">
+        </div>
+        <div class="seller-details">
                 <div class="seller-basics-name">                    
                     <h2>
                         {{seller.shopName}}        
                         {% if seller.isVerified %}
-                        <span class="badge" title="Verified Seller"><i class="fa-solid fa-badge-check"></i></span> 
+                        <span class="badge" title="Verified Seller">
+                            <i class="fa-solid fa-certificate" style="color: #4A8DF7; font-size: 1.5rem;"></i>
+                            <i class="fa-duotone fa-solid fa-check" style="color: white; font-size: 0.8rem; position: absolute; top: 52%; left: 50%; transform: translate(-50%, -50%);"></i>
+                        </span> 
                         {% endif %}                
                     </h2>
-                    <a href="{{ url_for('seller', seller_id=seller.sellerID) }}">
+                    <a href="{{ url_for('seller.seller', shop_name=seller.shopName) }}">
                     <button class="store-btn"><i class="fa-regular fa-store"></i>View Store</i></button>
                     </a>
                 </div>
                 <div class="seller-separator"></div>
+            
             <div class="seller-rating">                
                 <h3>Ratings: <i class='bx bxs-star'></i> {{ seller.totalRating }}</h3>
             </div>
             <div class="seller-separator"></div>
+            
             <div class="seller-products">
                 <h3>Products: {{ seller.productsNum }}</h3>
             </div>
             <div class="seller-separator"></div>
+            
             <div class="seller-followers">
                 <h3>Followers: {{ seller.totalFollowers }}</h3>
             </div>            
             <div class="seller-separator"></div>
+            
             <div class="seller-joined">
                 <h3>Joined: {{ seller.joinedDate }}</h3>
             </div>
         </div>
     </div>
 </div>
+
+    <div class="reviews-container">
+        <h2>Customer Reviews</h2>
+        <div class="review-summary">
+            {% for i in range(1, 6) %}
+                {% if product.productRating >= i %}
+                    <i class="fa-solid fa-star" style="color: #fdce15;"></i>
+                {% elif (i - product.productRating) < 0.5 %}
+                    <i class="fa-regular fa-star-half-stroke" style="color: #fdce15;"></i>
+                {% else %}
+                <i class="fa-regular fa-star" style="color: #fdce15;"></i>
+                {% endif %}
+            {% endfor %}
+            ({{ product.totalReviews }})
+        </div>
+        <div class="review-by-users">
+            {% if reviews %}
+                {% for review in reviews %}
+                    <div class="review-item">
+                        <div class="profile-info">
+                            <img src="{% if review.profilePic %}
+                                        {% if 'http' in review.profilePic %}
+                                            {{ review.profilePic }}
+                                        {% else %}
+                                            {{ url_for('static', filename=review.profilePic.replace('static/', '')) }}
+                                        {% endif %}
+                                    {% else %}
+                                        {{ url_for('static', filename='default_profile.jpg') }}
+                                    {% endif %}"
+                                alt="{{ review.user }}" 
+                                class="profile-pic">
+                                <p class="user-name">{{ review.user }}</p>
+                        </div>
+
+                        <div class="review-content">
+                            <p class="rating">Rating:
+                            {% for i in range(1, 6) %}
+                                {% if review.rating >= i %}
+                                    <i class="fa-solid fa-star" style="color: #fdce15;"></i>
+                                {% elif (i - review.rating) < 0.5 %}
+                                    <i class="fa-regular fa-star-half-stroke" style="color: #fdce15;"></i>
+                                {% else %}
+                                    <i class="fa-regular fa-star" style="color: #fdce15;"></i>
+                                {% endif %}
+                            {% endfor %}
+                            </p>
+                            <p class="review-heading">{{ review.reviewHeading }}</p>
+                            <p class="review-text">{{ review.reviewText }}</p>
+                            <p class="review-date"><em>Posted on: {{ review.dateCreated }}</em></p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No reviews available for this product.</p>
+            {% endif %}
+        </div>
+
+    </div>
 
 
         <section id="sellers" class="container mt-5">
@@ -309,11 +421,33 @@
     </footer>
   
   
-      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
-      <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+    <script>
+        // Jump to a specific slide when a thumbnail is clicked
+        function jumpToSlide(index) {
+            const carousel = new bootstrap.Carousel(document.getElementById('productCarousel'));
+            carousel.to(index);
+        }
+
+        // Attach event listeners to custom next and previous buttons
+        document.querySelector('.carousel-control-prev1').addEventListener('click', () => {
+            const carousel = new bootstrap.Carousel(document.getElementById('productCarousel'));
+            carousel.prev();
+        });
+
+        document.querySelector('.carousel-control-next1').addEventListener('click', () => {
+            const carousel = new bootstrap.Carousel(document.getElementById('productCarousel'));
+            carousel.next();
+        });
+    </script>
   </body>
   
   </html>
->>>>>>> 81bccb2 (seller_dashboard edited)

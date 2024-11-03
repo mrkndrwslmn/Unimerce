@@ -4,6 +4,7 @@
     --dark-green: #162623;
     --light-green: #577877;
     --bluewhite: #f0f5f7;
+    --darkbw: #c4d5d9
     --white: #fff;
     --grey: #aaa;
 }
@@ -14,15 +15,16 @@
     max-width: 80%;
     margin: 0 auto;
     padding: 20px;
-    background-color: #f8f9fa; /* Light background for the container */
+    gap: 25px;
+    background-color: #f8f9fa;
 }
 
 /* Sidebar styles */
 .user-profile-sidebar {
-    width: 250px; /* Fixed width for sidebar */
+    min-width: 20%;
     background-color: var(--white); /* Dark background for sidebar */
-    margin-right: 15px;
-    padding: 20px;
+    border-radius: 5px;
+    padding: 15px;
     color: #fff; /* White text */
     height: 100%; /* Make sidebar full height */
     display: flex;
@@ -80,6 +82,50 @@
     border-radius: 5px; /* Rounded corners */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     position: relative;
+}
+
+.user-profile-content h1 {
+    margin-bottom: 25px;
+}
+
+.address-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    position: relative;
+}
+
+.address-details {
+    max-width: 70%; /* Limit width to avoid overlap with buttons */
+}
+
+.address-heading {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.address-actions {
+    display: flex;
+    position: absolute;
+    gap: 10px; /* Space between buttons */
+    right: 15px; /* Push actions to the right */
+    top: 50%; /* Vertically centers the buttons */
+    transform: translateY(-50%); /* Centers based on height */
+    z-index: 100;
+}
+
+.address-actions button {
+    padding: 5px 10px;
+}
+
+/* Bold title for default address */
+.address-details h4 {
+    font-weight: bold;
 }
 
 /* Header styles */
@@ -166,6 +212,7 @@
     padding: 10px 15px; /* Padding for button */
     border-radius: 4px; /* Rounded corners */
     cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease;
 }
 
 .user-profile-save-btn:hover {
@@ -270,28 +317,56 @@ input[type="text"]:focus {
     outline: none; /* Remove default outline */
 }
 
-.btn {
-    padding: 10px 15px; /* Button padding */
-    border: none; /* Remove default border */
-    border-radius: 4px; /* Rounded button corners */
-    cursor: pointer; /* Pointer on hover */
-    display: inline-block; /* Prevents the button from stretching */
+.btn-container {
+    display: flex;  /* Align buttons with space in between */
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px; /* Space between buttons */
 }
 
 .btn-primary {
-    background-color: var(--primary-color); /* Primary button color */
-    color: white; /* Text color */
-    transition: background-color 0.3s; /* Smooth transition */
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: var(--white);
 }
 
 .btn-primary:hover {
-    background-color: var(--light-green); /* Darker shade on hover */
+    background-color: var(--light-green);
+}
+
+.btn-back-navigation {
+    border-radius: 5px;
+    background-color: transparent;
+    color: blue;
+}
+
+.btn-secondary {
+    border-radius: 5px;
+    background-color: transparent;
+    border: 2px solid var(--light-green);
+    color: var(--dark-green);
+    cursor: pointer;                       /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #ccc;
+    
+    color: var(--dark-green);
 }
 
 .add-address-form {
-    margin-top: 20px;          /* Space above the button */
-    display: flex;             /* Enable flexbox */
-    justify-content: flex-end; /* Align contents to the right */
+    position: absolute;
+    top: 0;
+    margin-top: 10px;
+    right: 2.5%;
+    display: flex;
+}
+
+.add-product-form {
+    display: flex;  /* Align buttons with space in between */
+    align-items: center;
+    justify-content: flex-end;
 }
 
 a {
@@ -303,10 +378,6 @@ a {
 
 a:hover {
     text-decoration: underline; /* Underline on hover */
-}
-
-btn-success {
-    max-width: 30%;
 }
 
 .logout-btn {
@@ -324,11 +395,9 @@ btn-success {
 
 /* Container for seller content */
 .seller-content {
-    max-width: 800px; /* Set a max width for better readability */
     min-width: 80%;
-    margin: 20px auto; /* Center the content */
     padding: 20px;
-    background-color: #f9f9f9; /* Light background for contrast */
+    background-color: #fff; /* Light background for contrast */
     border-radius: 8px; /* Rounded corners */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
@@ -356,17 +425,141 @@ h2 {
 }
 
 /* Form container styles */
-.form-container {
-    margin-top: 20px;
-    padding: 20px;
-    background-color: #fff; /* White background for form */
+.sellerform-main-wrapper {
+    width: 50%;
+    margin: 0 auto;
+    display: flex;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+.sellerform-form-wrapper {
+    margin: 0 auto;
+    width: 100%;
+    background: white;
 }
 
-/* Form group styles */
-.form-group {
-    margin-bottom: 15px; /* Spacing between form groups */
+.sellerform-steps {
+    padding-bottom: 18px;
+    margin-bottom: 35px;
+    border-bottom: 1px solid #DDE3EC;
+  }
+
+  .sellerform-form-step-1,
+  .sellerform-form-step-2,
+  .formbold-form-step-3 {
+    display: none;
+  }
+  
+  .sellerform-form-step-1.active,
+  .sellerform-form-step-2.active,
+  .formbold-form-step-3.active {
+    display: block;
+  }  
+
+  .sellerform-steps ul {
+    padding: 0;
+    margin: 0 auto;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+  }
+
+.sellerform-steps li {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-weight: 500;
+    font-size: 16px;
+    font-size: 16px;
+    color: #536387;
+  }
+
+.sellerform-steps li span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #DDE3EC;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    color: var(--primary-color);
+}
+
+.sellerform-steps li.active {
+    color: var(--primary-color);
+}
+
+.sellerform-steps li.active span {
+    background: var(--primary-color);
+    color: white;
+}
+
+
+
+textarea, input[type="text"], input[type="number"], input[type="tel"], input[type="email"], select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+}
+input[type="file"] {
+    padding: 5px;
+}
+
+/* Button styles */
+.form-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+button {
+    padding: 10px 25px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+button#prevBtn {
+    background-color: #ddd;
+    border-radius: 5px;
+}
+
+button#nextBtn {
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.sellerform-form-step-1, 
+.sellerform-form-step-2, 
+.sellerform-form-step-3 {
+    display: none;
+}
+
+.sellerform-form-step-1.active, 
+.sellerform-form-step-2.active, 
+.sellerform-form-step-3.active {
+    display: block;
+}
+
+/* Confirmation section */
+.formbold-form-confirm {
+    border-bottom: 1px solid #DDE3EC;
+    padding-bottom: 35px;
+}
+
+.formbold-form-confirm p {
+    font-size: 16px;
+    color: #536387;
+    margin-bottom: 22px;
 }
 
 /* Input styles */
@@ -427,7 +620,7 @@ input[type="file"] {
 }
 
 .prices {
-    font-size: 2em;
+    font-size: 1.5em;
     color: var(--light-green); /* Primary color */
     text-align: right;
     font-weight: bold;
@@ -464,7 +657,7 @@ input[type="file"] {
     flex: 1;
     font-size: 25px;
     color: #295255;
-    background-color: #ced4da; /* Bootstrap primary color */
+    background-color: #ccc; /* Bootstrap primary color */
 }
 
 .edits-button:hover {
@@ -472,6 +665,5 @@ input[type="file"] {
 }
 
 .archive-button:hover {
-    color: var(--white);
-    background-color: var(--primary-color); /* Darker shade on hover */
+    background-color: #aaa; /* Darker shade on hover */
 }
