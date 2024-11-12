@@ -296,7 +296,7 @@ def shoppingcart():
     """Handle user login."""
 
     if 'logged_in' not in session:
-        flash("Access Denied. Please log in to your account.", 'warning')
+        flash("Please log in to your account so you can add products to your cart.", 'warning')
         return redirect(url_for('user.login'))    
     
     account_id = session.get('userID')
@@ -340,7 +340,7 @@ def addFromCart():
     """Remove an item from the shopping cart based on productID."""
     
     if 'logged_in' not in session:
-        flash("Access Denied. Please log in to your account.", 'warning')
+        flash("Please log in to add products to your cart.", 'warning')
         return redirect(url_for('user.login'))
 
     account_id = session.get('userID')  # Get the logged-in user's account ID

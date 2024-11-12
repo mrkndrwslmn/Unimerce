@@ -393,6 +393,7 @@
 
 /* //........ Search Results ........// */
 
+
 .search-container {
     max-width: 80%; /* Set maximum width */
     margin: 0 auto; /* Center the container */
@@ -483,6 +484,21 @@
   }
   
 /* //........ Product Management ........// */
+
+.product-name-manage {
+    max-height: 2rem; /* Controls the height for truncation */
+    overflow: hidden; /* Hides overflow text */
+    text-overflow: ellipsis; /* Shows ellipsis for overflowing text */
+    display: -webkit-box; /* Required for ellipsis in Safari */
+    -webkit-box-orient: vertical; /* Sets box orientation */
+    -webkit-line-clamp: 1; /* Limits to 2 lines */
+    font-size: 1.2rem; /* Font size */
+    line-height: 1.5em; /* Sets line height */
+    font-weight: bold; /* Makes font bold */
+    margin-left: 1rem;
+    color: var(--primary-color); /* Uses CSS variable */
+}
+
 .image-upload-container {
     display: flex;
     flex-direction: column;

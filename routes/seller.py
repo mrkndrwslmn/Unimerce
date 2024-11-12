@@ -305,8 +305,7 @@ def manage_store():
             seller_id = result['sellerID']
             print(f"Seller ID: {seller_id}")
         else:
-            flash("Seller not found.", 'danger')
-            return redirect(url_for('homepage'))   
+            return redirect(url_for('seller.seller_application'))   
 
         products = fetch_all_products(seller_id)
         seller = get_seller_info(seller_id)

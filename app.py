@@ -16,16 +16,13 @@ from routes.product import (
     fetch_deals, addFromCart
 )
 
-# Load environment variables
 load_dotenv()
 
-# Initialize Flask app
 app = Flask(__name__)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'default_secret_key')
 app.config['SESSION_PERMANENT'] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
 
-# Register blueprints
 app.register_blueprint(address_bp, url_prefix='/address')
 app.register_blueprint(product_bp, url_prefix='/products')
 app.register_blueprint(user_bp, url_prefix='/user')

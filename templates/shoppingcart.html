@@ -289,5 +289,16 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
     </script>
+
+<script>
+    const flashMessages = JSON.parse(`{{ get_flashed_messages(with_categories=True) | tojson | safe }}`);
+    flashMessages.forEach(function(message) {
+    Swal.fire({
+        icon: message[0], 
+        title: message[1]
+    });
+    });
+</script> 
+
 </body>
 </html>

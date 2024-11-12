@@ -39,7 +39,7 @@
                 <a href="#" class="section-logo">
                     <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Banner 1">
                 </a>
-                <p>The leading online commerce platform in BSIT 2A.</p>
+                <p>The #1 trusted online commerce platform for premium brands and devices.</p>
             </div>
             
             <div class="right-container" id="right-container">
@@ -155,25 +155,15 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        $(document).ready(function() {
-            const flashMessages = {{ get_flashed_messages(with_categories=true) | tojson }}; 
-            flashMessages.forEach(function(message) {
+        const flashMessages = JSON.parse(`{{ get_flashed_messages(with_categories=True) | tojson | safe }}`);
+        flashMessages.forEach(function(message) {
             Swal.fire({
                 icon: message[0], 
-                title: message[1], 
+                title: message[1]
+                });
             });
-            });
-
-            {% if error %}
-            Swal.fire({
-                title: "Error",
-                text: "{{ error }}",
-                icon: "error",
-                confirmButtonText: "OK"
-            });
-            {% endif %}
-        });
-    </script>
+      </script>    
+        
 
 
 

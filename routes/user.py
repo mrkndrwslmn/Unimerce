@@ -2,6 +2,9 @@ import os
 import random
 import bcrypt
 import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
 from flask import Blueprint, request, render_template, redirect, url_for, session, flash
 from helpers.database import get_db_connection
 from werkzeug.utils import secure_filename
@@ -18,23 +21,39 @@ def send_otp_email(recipient_email, otp, first_name):
 
     subject = "Verify Your Email - Welcome to UNIMERCE!"
     body = f"""
-Hello {first_name},
+    <html>
+    <body>
+        <img src="cid:unimercebanner" alt="Unimerce Banner" style="width:100%; height:auto;">
+        <p>Hello {first_name},</p>
+        <p>Thank you for signing up with UNIMERCE! Please verify your email to activate your account using the OTP below:</p>
+        <p><b>OTP: {otp}</b></p>
+        <p>If you didn't request this, please ignore this email.</p>
+        <p>Happy Shopping!<br>The UNIMERCE Team</p>
+    </body>
+    </html>
+    """
+    # Set up the MIME message
+    msg = MIMEMultipart("related")
+    msg["From"] = f"UNIMERCE <{user}>"
+    msg["To"] = recipient_email
+    msg["Subject"] = subject
 
-Thank you for signing up with UNIMERCE! Please verify your email to activate your account using the OTP below:
+    # Attach the HTML version of the email
+    msg.attach(MIMEText(body, "html"))
 
-OTP: {otp}
+    image_path = os.path.join("static", "images", "unimercebanner.png")
 
-If you didn't request this, please ignore this email. 
-
-Happy Shopping!  
-The UNIMERCE Team
-"""
+    # Attach the image as a MIMEImage and set a Content ID
+    with open(image_path, "rb") as img_file:
+        img = MIMEImage(img_file.read())
+        img.add_header("Content-ID", "<unimercebanner>")
+        img.add_header("Content-Disposition", "inline", filename="unimercebanner.png")
+        msg.attach(img)
 
     with smtplib.SMTP('smtp.gmail.com', 587) as server:
         server.starttls()
         server.login(user, password)
-        message = f'Subject: {subject}\n\n{body}'
-        server.sendmail(user, recipient_email, message)
+        server.sendmail(user, recipient_email, msg.as_string())
 
 def get_account_id(cursor, username):
     """Fetch account ID based on username."""
